@@ -1,0 +1,101 @@
+
+<div class="flex h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <app-sidebar 
+    [isOpen]="isSidebarOpen" 
+    (toggle)="toggleSidebar()">
+  </app-sidebar>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <app-header 
+      [user]="currentUser"
+      (sidebarToggle)="toggleSidebar()"
+      (logout)="onLogout()">
+    </app-header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-6">
+      <div class="max-w-7xl mx-auto">
+        <!-- Welcome Banner -->
+        <div class="mb-8">
+          <h1 class="text-2xl md:text-3xl font-bold text-gray-900">
+            Welcome back, {{ currentUser?.name }}!
+          </h1>
+          <p class="text-gray-600 mt-2">
+            Here's what's happening with your store today.
+          </p>
+        </div>
+
+        <!-- Stats Cards -->
+        <app-stats-cards class="mb-8"></app-stats-cards>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <!-- Sales Chart -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <app-charts type="sales"></app-charts>
+          </div>
+
+          <!-- Revenue Chart -->
+          <div class="bg-white rounded-xl shadow-sm p-6">
+            <app-charts type="revenue"></app-charts>
+          </div>
+        </div>
+
+        <!-- Recent Activity & Quick Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Recent Activity -->
+          <div class="lg:col-span-2">
+            <app-recent-activity></app-recent-activity>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="space-y-6">
+            <!-- Inventory Status -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Inventory Status</h3>
+              <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Low Stock Items</span>
+                  <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-sm font-medium">12</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Out of Stock</span>
+                  <span class="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-sm font-medium">5</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span class="text-gray-600">Total Products</span>
+                  <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">245</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+              <div class="space-y-2">
+                <button class="w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                  ➕ New Sale
+                </button>
+                <button class="w-full text-left px-3 py-2 text-sm text-green-600 hover:bg-green-50 rounded-lg transition-colors">
+                  📦 Add Product
+                </button>
+                <button class="w-full text-left px-3 py-2 text-sm text-purple-600 hover:bg-purple-50 rounded-lg transition-colors">
+                  👥 Manage Users
+                </button>
+                <button class="w-full text-left px-3 py-2 text-sm text-orange-600 hover:bg-orange-50 rounded-lg transition-colors">
+                  📊 View Reports
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>

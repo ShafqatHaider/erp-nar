@@ -1,0 +1,121 @@
+
+<header class="bg-white shadow-sm border-b z-10 sticky top-0">
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+
+      <div class="flex items-center">
+
+        <button 
+          class="lg:hidden p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+          (click)="onSidebarToggle()">
+          <span class="text-xl">☰</span>
+        </button>
+
+
+        <div class="hidden md:block ml-4">
+          <div class="relative">
+            <input 
+              type="text" 
+              placeholder="Search..."
+              class="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <span class="text-gray-400">🔍</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="flex items-center space-x-4">
+
+        <div class="relative">
+          <button 
+            class="p-2 rounded-lg hover:bg-gray-100 relative"
+            (click)="toggleNotifications()">
+            <span class="text-xl">🔔</span>
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              3
+            </span>
+          </button>
+
+          <!-- Notifications Dropdown -->
+          <div 
+            *ngIf="isNotificationsOpen"
+            class="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border py-2 z-50">
+            <div class="px-4 py-2 border-b">
+              <h3 class="font-semibold text-gray-900">Notifications</h3>
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+              <div *ngFor="let notif of [1,2,3]" class="px-4 py-3 hover:bg-gray-50 border-b">
+                <p class="text-sm text-gray-700">New sale recorded #00{{notif}}</p>
+                <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
+              </div>
+            </div>
+            <div class="px-4 py-2 border-t">
+              <button class="text-sm text-blue-600 hover:text-blue-800 w-full text-center">
+                View All Notifications
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Menu -->
+        <div class="relative">
+          <button 
+            class="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-100"
+            (click)="toggleDropdown()">
+            <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <span class="text-white text-sm font-semibold">
+                {{ user?.name?.charAt(0) || 'U' }}
+              </span>
+            </div>
+            <div class="hidden md:block text-left">
+              <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
+              <p class="text-xs text-gray-500">{{ user?.email }}</p>
+            </div>
+            <span class="text-gray-400">▼</span>
+          </button>
+
+          <!-- User Dropdown Menu -->
+          <div 
+            *ngIf="isDropdownOpen"
+            class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border py-1 z-50">
+            <div class="px-4 py-2 border-b">
+              <p class="text-sm font-medium text-gray-900">{{ user?.name }}</p>
+              <p class="text-xs text-gray-500 truncate">{{ user?.email }}</p>
+            </div>
+            
+            <button 
+              (click)="onProfile()"
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+              <span>👤</span>
+              <span>My Profile</span>
+            </button>
+            
+            <button 
+              (click)="onUserManagement()"
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+              <span>👥</span>
+              <span>User Management</span>
+            </button>
+            
+            <button 
+              class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2">
+              <span>⚙️</span>
+              <span>Settings</span>
+            </button>
+            
+            <div class="border-t my-1"></div>
+            
+            <button 
+              (click)="onLogout()"
+              class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2">
+              <span>🚪</span>
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

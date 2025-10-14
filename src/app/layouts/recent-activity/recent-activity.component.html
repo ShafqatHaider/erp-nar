@@ -1,0 +1,30 @@
+<!-- components/dashboard/recent-activity/recent-activity.component.html -->
+<div class="bg-white rounded-xl shadow-sm p-6">
+  <div class="flex justify-between items-center mb-6">
+    <h3 class="text-lg font-semibold text-gray-900">Recent Activity</h3>
+    <button class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+      View All
+    </button>
+  </div>
+
+  <div class="space-y-4">
+    <div 
+      *ngFor="let activity of activities"
+      class="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+      
+      <div 
+        [class]="['w-8 h-8 rounded-full flex items-center justify-center text-sm', getActivityColor(activity.type)]">
+        {{ getActivityIcon(activity.type) }}
+      </div>
+
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-gray-900">
+          <span class="font-medium">{{ activity.user }}</span>
+          {{ activity.action }}
+          <span class="font-medium">{{ activity.target }}</span>
+        </p>
+        <p class="text-xs text-gray-500 mt-1">{{ activity.time }}</p>
+      </div>
+    </div>
+  </div>
+</div>
