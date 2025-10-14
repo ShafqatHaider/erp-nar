@@ -6,7 +6,7 @@
   command = "npm run build"
   
   # Publish directory (output of Angular build)
-  publish = "dist/your-app-name/browser"
+  publish = "dist/ERP-NAR/browser/browser"
 
 [build.environment]
   # Node.js version
