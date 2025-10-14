@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../Core/Services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-login',
@@ -10,11 +10,11 @@ import { CommonModule } from '@angular/common';
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
 loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
-
+private route = inject(ActivatedRoute);
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -26,7 +26,13 @@ loginForm: FormGroup;
     });
   }
 
-  onSubmit(): void {
+ngOnInit(): void {
+     if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/main/dashboard']);
+    }
+}
+
+   onSubmit(): void {
     if (this.loginForm.valid) {
       this.isLoading = true;
       this.errorMessage = '';
@@ -35,7 +41,9 @@ loginForm: FormGroup;
 
       this.authService.login(loginData).subscribe({
         next: () => {
-          this.router.navigate(['/dashboard']);
+          // Get return url from route parameters or default to dashboard
+          const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+          this.router.navigateByUrl(returnUrl);
         },
         error: (error) => {
           this.errorMessage = error.error?.message || 'Login failed';

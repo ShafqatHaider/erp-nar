@@ -1,0 +1,164 @@
+<div class="p-6">
+
+  <div class="mb-6">
+    <div class="flex items-center space-x-2 mb-2">
+      <button 
+        (click)="router.navigate(['/accounts'])"
+        class="text-gray-500 hover:text-gray-700 flex items-center space-x-1">
+        <span>←</span>
+        <span>Back to Accounts</span>
+      </button>
+    </div>
+    <h1 class="text-2xl font-bold text-gray-900">
+      {{ isEdit ? 'Edit Account' : 'Create New Account' }}
+    </h1>
+    <p class="text-gray-600">
+      {{ isEdit ? 'Update account information' : 'Add a new customer, vendor, or other account' }}
+    </p>
+  </div>
+
+  <div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-xl shadow-sm p-6">
+      <form [formGroup]="accountForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        
+        <!-- Account Title -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Account Title *
+          </label>
+          <input 
+            type="text" 
+            formControlName="title"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            [class.border-red-300]="accountForm.get('title')?.invalid && accountForm.get('title')?.touched"
+            placeholder="Enter account name (e.g., 'John Doe', 'ABC Suppliers')">
+          <div *ngIf="accountForm.get('title')?.invalid && accountForm.get('title')?.touched" class="mt-1 text-sm text-red-600">
+            <div *ngIf="accountForm.get('title')?.errors?.['required']">Account title is required</div>
+            <div *ngIf="accountForm.get('title')?.errors?.['minlength']">Title must be at least 2 characters</div>
+            <div *ngIf="accountForm.get('title')?.errors?.['maxlength']">Title cannot exceed 255 characters</div>
+          </div>
+        </div>
+
+        <!-- Account Type -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Account Type *
+          </label>
+          <select 
+            formControlName="accountType"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            [class.border-red-300]="accountForm.get('accountType')?.invalid && accountForm.get('accountType')?.touched">
+            <option value="">Select Account Type</option>
+            <option *ngFor="let type of accountTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+          <div *ngIf="accountForm.get('accountType')?.invalid && accountForm.get('accountType')?.touched" class="mt-1 text-sm text-red-600">
+            Account type is required
+          </div>
+          <div *ngIf="accountForm.get('accountType')?.value" class="mt-1 text-sm text-gray-500">
+            {{ getAccountTypeDescription(accountForm.get('accountType')?.value) }}
+          </div>
+        </div>
+
+        <!-- Category -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Category *
+          </label>
+          <select 
+            formControlName="cateAccId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+            [class.border-red-300]="accountForm.get('cateAccId')?.invalid && accountForm.get('cateAccId')?.touched"
+            [disabled]="isCategoriesLoading">
+            <option value="">Select Category</option>
+            <option *ngFor="let category of categories" [value]="category.cateAccId">
+              {{ category.cateAccName }}
+            </option>
+          </select>
+          <div *ngIf="isCategoriesLoading" class="mt-1 text-sm text-gray-500">
+            Loading categories...
+          </div>
+          <div *ngIf="accountForm.get('cateAccId')?.invalid && accountForm.get('cateAccId')?.touched" class="mt-1 text-sm text-red-600">
+            Category is required
+          </div>
+        </div>
+
+        <!-- Opening Balance & Balance Type -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Opening Balance *
+            </label>
+            <input 
+              type="number" 
+              formControlName="openingBalance"
+              step="0.01"
+              min="0"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              [class.border-red-300]="accountForm.get('openingBalance')?.invalid && accountForm.get('openingBalance')?.touched">
+            <div *ngIf="accountForm.get('openingBalance')?.invalid && accountForm.get('openingBalance')?.touched" class="mt-1 text-sm text-red-600">
+              Valid opening balance is required
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Balance Type *
+            </label>
+            <select 
+              formControlName="balanceType"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+              <option *ngFor="let type of balanceTypes" [value]="type.value">
+                {{ type.label }}
+              </option>
+            </select>
+            <div class="mt-1 text-sm text-gray-500">
+              {{ getBalanceTypeDescription(accountForm.get('balanceType')?.value) }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+          <input 
+            type="checkbox" 
+            formControlName="isActive"
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            id="isActive">
+          <label for="isActive" class="text-sm text-gray-700">
+            Active Account
+          </label>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex justify-end space-x-3 pt-4 border-t">
+          <button 
+            type="button"
+            (click)="router.navigate(['/accounts'])"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isSubmitting || accountForm.invalid"
+            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
+            <span *ngIf="isSubmitting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+            <span>{{ isSubmitting ? 'Saving...' : (isEdit ? 'Update Account' : 'Create Account') }}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Help Information -->
+    <div class="mt-6 bg-blue-50 rounded-xl p-4">
+      <h3 class="text-sm font-semibold text-blue-900 mb-2">💡 Account Creation Tips</h3>
+      <ul class="text-sm text-blue-700 space-y-1">
+        <li>• Choose the appropriate account type based on the account's purpose</li>
+        <li>• Set the correct balance type (Debit for assets/expenses, Credit for liabilities/income)</li>
+        <li>• Opening balance will automatically create a ledger entry</li>
+        <li>• You can add more transactions to the account ledger after creation</li>
+      </ul>
+    </div>
+  </div>
+</div>

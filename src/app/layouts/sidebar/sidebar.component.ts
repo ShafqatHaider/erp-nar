@@ -20,9 +20,10 @@ export class SidebarComponent {
   @Output() toggle = new EventEmitter<void>();
 
   menuItems: MenuItem[] = [
-    { name: 'Dashboard', icon: '📊', route: '/dashboard' },
-    { name: 'POS', icon: '🛒', route: '/pos' },
-    { name: 'Products', icon: '📦', route: '/products' },
+    { name: 'Dashboard', icon: '📊', route: '/main/dashboard' },
+    { name: 'Accounts', icon: '🛒', route: '/main/accounts' },
+    { name: 'Products', icon: '📦', route: '/codes/items' }, // Add this
+    { name: 'Categories', icon: '🏷️', route: '/codes/categories' },
     { name: 'Sales', icon: '💰', route: '/sales' },
     { name: 'Customers', icon: '👥', route: '/customers' },
     { name: 'Inventory', icon: '📋', route: '/inventory', badge: 12 },

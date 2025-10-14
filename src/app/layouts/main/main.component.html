@@ -1,0 +1,24 @@
+
+<div class="flex h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <app-sidebar 
+    [isOpen]="isSidebarOpen" 
+    (toggle)="toggleSidebar()">
+  </app-sidebar>
+
+  <!-- Main Content -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Header -->
+    <app-header 
+      [user]="currentUser"
+      (sidebarToggle)="toggleSidebar()"
+      (logout)="onLogout()">
+    </app-header>
+
+    <!-- Main Content Area -->
+    
+<router-outlet></router-outlet>
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>

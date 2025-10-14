@@ -70,9 +70,9 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  isAuthenticated(): boolean {
-    return !!this.getToken();
-  }
+  // isAuthenticated(): boolean {
+  //   return !!this.getToken();
+  // }
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/users`);
@@ -81,4 +81,19 @@ export class AuthService {
   updateUserStatus(userId: number, isActive: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/users/${userId}/status`, isActive);
   }
+
+  isAuthenticated(): boolean {
+    const token = this.getToken();
+    if (!token) return false;
+
+    // Optional: Check if token is expired
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp = payload.exp * 1000; // Convert to milliseconds
+      return Date.now() < exp;
+    } catch (error) {
+      return false;
+    }
+  }
+
 }
