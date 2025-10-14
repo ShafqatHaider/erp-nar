@@ -44,7 +44,6 @@ export class HeaderComponent {
 
   onLogout() {
     debugger
-    alert('cliked')
     this.logout.emit();
     this.isDropdownOpen = false;
   }
