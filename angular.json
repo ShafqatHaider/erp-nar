@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/erp-nar",
+            "outputPath": "dist/erp-nar/browser",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -29,7 +29,9 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+                
+              },
+              "src/_redirects"
             ],
             "styles": [
               "src/styles.scss"
@@ -88,7 +90,8 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/_redirects"
             ],
             "styles": [
               "src/styles.scss"
