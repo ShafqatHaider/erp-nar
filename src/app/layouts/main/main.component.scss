@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+
+main ::-webkit-scrollbar {
+  width: 6px;
+}
+
+main ::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+main ::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+main ::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}

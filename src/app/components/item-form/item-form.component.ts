@@ -2,22 +2,23 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AccountService } from '../../Core/Services/account.service';
 import { CodeService } from '../../Core/Services/code.service';
-import { CodeCategory, CreateCodeItem } from '../../Core/models/code.model';
+import { AccountService } from '../../Core/Services/account.service';
 import { AccountCentral } from '../../Core/models/account.model';
+import { CodeCategory, CreateCodeItem } from '../../Core/models/code.model';
 
 @Component({
   selector: 'app-item-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './item-form.component.html'
+  templateUrl: './item-form.component.html',
+  styleUrls: ['./item-form.component.scss']
 })
 export class ItemFormComponent implements OnInit {
   private codeService = inject(CodeService);
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
-  private router = inject(Router);
+  public router = inject(Router);
   private route = inject(ActivatedRoute);
 
   itemForm: FormGroup;
@@ -50,10 +51,10 @@ export class ItemFormComponent implements OnInit {
       categoryId: ['', Validators.required],
       accId: ['', Validators.required],
       tpRates: [0, [Validators.required, Validators.min(0)]],
-      costPrice: [0, [Validators.required, Validators.min(0)]],
       costPercent: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
-      salePrice: [0, [Validators.required, Validators.min(0)]],
+      costPrice: [{ value: 0, disabled: true }], // Auto-calculated, read-only
       salePercent: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      salePrice: [{ value: 0, disabled: true }], // Auto-calculated, read-only
       stockQty: [0, [Validators.required, Validators.min(0)]],
       unitId: [1, Validators.required],
       productCode: [''],
@@ -77,12 +78,10 @@ export class ItemFormComponent implements OnInit {
       }
     });
 
-    // Calculate sale price when cost price or cost percent changes
-    this.itemForm.get('costPrice')?.valueChanges.subscribe(() => this.calculateSalePrice());
-    this.itemForm.get('costPercent')?.valueChanges.subscribe(() => this.calculateSalePrice());
-    
-    // Calculate cost percent when sale price changes
-    this.itemForm.get('salePrice')?.valueChanges.subscribe(() => this.calculateCostPercent());
+    // Calculate prices when TP Rates or percentages change
+    this.itemForm.get('tpRates')?.valueChanges.subscribe(() => this.calculatePrices());
+    this.itemForm.get('costPercent')?.valueChanges.subscribe(() => this.calculatePrices());
+    this.itemForm.get('salePercent')?.valueChanges.subscribe(() => this.calculatePrices());
   }
 
   loadCategories() {
@@ -122,9 +121,7 @@ export class ItemFormComponent implements OnInit {
           categoryId: item.categoryId,
           accId: item.accId,
           tpRates: item.tpRates,
-          costPrice: item.costPrice,
           costPercent: item.costPercent,
-          salePrice: item.salePrice,
           salePercent: item.salePercent,
           stockQty: item.stockQty,
           unitId: item.unitId,
@@ -135,6 +132,9 @@ export class ItemFormComponent implements OnInit {
           isMostSoldItem: item.isMostSoldItem,
           isActive: item.isActive
         });
+        
+        // Calculate prices based on loaded data
+        this.calculatePrices();
         this.isLoading = false;
       },
       error: (error) => {
@@ -145,35 +145,34 @@ export class ItemFormComponent implements OnInit {
     });
   }
 
-  calculateSalePrice() {
-    const costPrice = this.itemForm.get('costPrice')?.value || 0;
+  calculatePrices() {
+    const tpRates = this.itemForm.get('tpRates')?.value || 0;
     const costPercent = this.itemForm.get('costPercent')?.value || 0;
-    
-    if (costPrice > 0 && costPercent > 0) {
-      const salePrice = costPrice + (costPrice * costPercent / 100);
-      this.itemForm.patchValue({
-        salePrice: Math.round(salePrice * 100) / 100,
-        salePercent: costPercent
-      }, { emitEvent: false });
-    }
-  }
+    const salePercent = this.itemForm.get('salePercent')?.value || 0;
 
-  calculateCostPercent() {
-    const costPrice = this.itemForm.get('costPrice')?.value || 0;
-    const salePrice = this.itemForm.get('salePrice')?.value || 0;
+    // Calculate Cost Price: TP Rates - (TP Rates * costPercent / 100)
+    const costPrice = tpRates - (tpRates * costPercent / 100);
     
-    if (costPrice > 0 && salePrice > 0) {
-      const costPercent = ((salePrice - costPrice) / costPrice) * 100;
-      this.itemForm.patchValue({
-        costPercent: Math.round(costPercent * 100) / 100
-      }, { emitEvent: false });
-    }
+    // Calculate Sale Price: TP Rates - (TP Rates * salePercent / 100)
+    const salePrice = tpRates - (tpRates * salePercent / 100);
+
+    // Update form values without triggering events
+    this.itemForm.patchValue({
+      costPrice: Math.round(costPrice * 100) / 100,
+      salePrice: Math.round(salePrice * 100) / 100
+    }, { emitEvent: false });
   }
 
   onSubmit() {
     if (this.itemForm.valid) {
       this.isSubmitting = true;
-      const formData: CreateCodeItem = this.itemForm.value;
+      
+      // Get the calculated values for submission
+      const formData: CreateCodeItem = {
+        ...this.itemForm.getRawValue(), // This includes disabled fields
+        costPrice: this.itemForm.get('costPrice')?.value,
+        salePrice: this.itemForm.get('salePrice')?.value
+      };
 
       const operation = this.isEdit 
         ? this.codeService.updateItem(this.itemId!, formData)
@@ -204,7 +203,15 @@ export class ItemFormComponent implements OnInit {
   getUnitName(unitId: number): string {
     return this.units.find(u => u.id === unitId)?.name || 'Unit';
   }
-  goBack(){
-    this.router.navigate(['/main/codes/items'])
+
+  // Helper method to calculate profit margin
+  calculateProfitMargin(): number {
+    const costPrice = this.itemForm.get('costPrice')?.value || 0;
+    const salePrice = this.itemForm.get('salePrice')?.value || 0;
+    
+    if (costPrice > 0 && salePrice > costPrice) {
+      return ((salePrice - costPrice) / costPrice) * 100;
+    }
+    return 0;
   }
 }

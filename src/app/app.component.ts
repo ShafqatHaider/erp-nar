@@ -16,6 +16,7 @@ export class AppComponent implements OnInit {
   isLoggedIn = false;
 
   ngOnInit() {
+    debugger
     // Subscribe to authentication state changes
     this.authService.currentUser$.subscribe(user => {
       this.isLoggedIn = !!user && this.authService.isAuthenticated();

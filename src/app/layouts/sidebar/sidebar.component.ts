@@ -20,16 +20,16 @@ export class SidebarComponent {
   @Output() toggle = new EventEmitter<void>();
 
   menuItems: MenuItem[] = [
-    { name: 'Dashboard', icon: '📊', route: '/main/dashboard' },
-    { name: 'Accounts', icon: '🛒', route: '/main/accounts' },
+    { name: 'Dashboard', icon: '📊', route: '/dashboard' },
+    { name: 'Accounts', icon: '🛒', route: '/accounts' },
     { name: 'Products', icon: '📦', route: '/codes/items' }, // Add this
     { name: 'Categories', icon: '🏷️', route: '/codes/categories' },
     { name: 'Sales', icon: '💰', route: '/sales' },
-    { name: 'Customers', icon: '👥', route: '/customers' },
-    { name: 'Inventory', icon: '📋', route: '/inventory', badge: 12 },
-    { name: 'Reports', icon: '📈', route: '/reports' },
-    { name: 'Users', icon: '👤', route: '/users' },
-    { name: 'Settings', icon: '⚙️', route: '/settings' }
+    { name: 'Purchases', icon: '📈', route: '/purchases' },
+    { name: 'H.R', icon: '📈', route: '/hr' },
+    { name: 'Payroll', icon: '📈', route: '/hr/payroll' },
+    // { name: 'Reports', icon: '📈', route: '/reports' },
+    
   ];
 
   onToggle() {

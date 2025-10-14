@@ -109,7 +109,7 @@ export class AccountFormComponent implements OnInit {
 
       operation.subscribe({
         next: (account) => {
-          this.router.navigate(['/main/accounts']);
+          this.router.navigate(['/accounts']);
         },
         error: (error) => {
           console.error('Error saving account:', error);

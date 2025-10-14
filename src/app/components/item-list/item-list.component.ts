@@ -205,7 +205,7 @@ updateReqularItemsCount(){
 
 
   createProduct(){
-    this.router.navigate(['/main/codes/items/create']);
+    this.router.navigate(['/codes/items/create']);
     
   }
 }

@@ -137,13 +137,13 @@ export class AccountListComponent implements OnInit {
 
 
   createAccount(){
-    this.router.navigate(['/main/accounts/create']);
+    this.router.navigate(['/accounts/create']);
   }
 
   onEdit(e:any){
-    this.router.navigate(['/main/accounts', e.accId, 'edit']);
+    this.router.navigate(['/accounts', e.accId, 'edit']);
   }
   viewLedger(e:any){
-    this.router.navigate(['/main/accounts', e.accId, 'ledger']);
+    this.router.navigate(['/accounts', e.accId, 'ledger']);
   }
 }

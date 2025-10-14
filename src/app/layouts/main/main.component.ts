@@ -41,6 +41,7 @@ private authService = inject(AuthService);
   }
 
   onLogout() {
+    debugger
     this.authService.logout();
     this.router.navigate(['/login']);
   }

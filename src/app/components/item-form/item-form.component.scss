@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.form-container {
+  height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+
+.form-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.form-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Ensure form elements are properly spaced */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.readonly-field {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+}

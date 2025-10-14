@@ -9,6 +9,10 @@ import { CategoryFormComponent } from './components/category-form/category-form.
 import { CategoryListComponent } from './components/category-list/category-list.component';
 import { ItemListComponent } from './components/item-list/item-list.component';
 import { ItemFormComponent } from './components/item-form/item-form.component';
+import { HrListComponent } from './components/hr-list/hr-list.component';
+import { PayrollListComponent } from './components/payroll-list/payroll-list.component';
+import { SaleListComponent } from './components/sale-list/sale-list.component';
+import { PurchaseListComponent } from './components/purchase-list/purchase-list.component';
 
 export const routes: Routes = [
   { 
@@ -22,23 +26,28 @@ export const routes: Routes = [
   //   canActivate: [GuestGuard] 
   // },
   {
-    path: 'main',
-    canActivate: [AuthGuard], // Protect the entire main section
+    path: '',
+    canActivate: [AuthGuard], 
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'accounts', component: AccountListComponent },
       { path: 'accounts/create', component: AccountFormComponent },
       { path: 'accounts/:id/edit', component: AccountFormComponent },
       // { path: 'accounts/:id/ledger', component: AccountLedgerComponent },
-  { path: 'codes/categories', component: CategoryListComponent, canActivate: [AuthGuard] },
-  { path: 'codes/categories/create', component: CategoryFormComponent, canActivate: [AuthGuard] },
-  { path: 'codes/categories/:id/edit', component: CategoryFormComponent, canActivate: [AuthGuard] },
-  { path: 'codes/items', component: ItemListComponent, canActivate: [AuthGuard] },
-  { path: 'codes/items/create', component: ItemFormComponent, canActivate: [AuthGuard] },
-  { path: 'codes/items/:id/edit', component: ItemFormComponent, canActivate: [AuthGuard] },
+  { path: 'codes/categories', component: CategoryListComponent },
+  { path: 'codes/categories/create', component: CategoryFormComponent },
+  { path: 'codes/categories/:id/edit', component: CategoryFormComponent },
+  { path: 'codes/items', component: ItemListComponent },
+  { path: 'codes/items/create', component: ItemFormComponent },
+  { path: 'codes/items/:id/edit', component: ItemFormComponent },
+  { path: 'hr', component: HrListComponent },
+  { path: 'hr/payroll', component: PayrollListComponent },
+  { path: 'sales', component: SaleListComponent },
+  { path: 'purchases', component: PurchaseListComponent },
+  { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
     ]
   },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' }
+  
 ];

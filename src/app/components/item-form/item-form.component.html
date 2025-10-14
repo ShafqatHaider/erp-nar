@@ -1,326 +1,365 @@
-<div class="p-6">
-  <!-- Header -->
-  <div class="mb-6">
-    <div class="flex items-center space-x-2 mb-2">
-      <button 
-        (click)="goBack()"
-        class="text-gray-500 hover:text-gray-700 flex items-center space-x-1">
-        <span>←</span>
-        <span>Back to Products</span>
-      </button>
+<!-- components/codes/item-form/item-form.component.html -->
+<div class="form-container">
+  <div class="p-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center space-x-2 mb-2">
+        <button 
+          (click)="router.navigate(['/codes/items'])"
+          class="text-gray-500 hover:text-gray-700 flex items-center space-x-1">
+          <span>←</span>
+          <span>Back to Products</span>
+        </button>
+      </div>
+      <h1 class="text-2xl font-bold text-gray-900">
+        {{ isEdit ? 'Edit Product' : 'Create New Product' }}
+      </h1>
+      <p class="text-gray-600">
+        {{ isEdit ? 'Update product information' : 'Add a new product to your inventory' }}
+      </p>
     </div>
-    <h1 class="text-2xl font-bold text-gray-900">
-      {{ isEdit ? 'Edit Product' : 'Create New Product' }}
-    </h1>
-    <p class="text-gray-600">
-      {{ isEdit ? 'Update product information' : 'Add a new product to your inventory' }}
-    </p>
-  </div>
 
-  <div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-xl shadow-sm p-6">
-      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="space-y-6">
-        
-        <!-- Basic Information -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Product Name -->
-          <div class="md:col-span-2">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Product Name *
-            </label>
-            <input 
-              type="text" 
-              formControlName="name"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              [class.border-red-300]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
-              placeholder="Enter product name">
-            <div *ngIf="itemForm.get('name')?.invalid && itemForm.get('name')?.touched" class="mt-1 text-sm text-red-600">
-              <div *ngIf="itemForm.get('name')?.errors?.['required']">Product name is required</div>
-              <div *ngIf="itemForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</div>
-              <div *ngIf="itemForm.get('name')?.errors?.['maxlength']">Name cannot exceed 255 characters</div>
-            </div>
-          </div>
-
-          <!-- Category -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Category *
-            </label>
-            <select 
-              formControlName="categoryId"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              [class.border-red-300]="itemForm.get('categoryId')?.invalid && itemForm.get('categoryId')?.touched"
-              [disabled]="isCategoriesLoading">
-              <option value="">Select Category</option>
-              <option *ngFor="let category of categories" [value]="category.id">
-                {{ category.cateName }}
-              </option>
-            </select>
-            <div *ngIf="isCategoriesLoading" class="mt-1 text-sm text-gray-500">
-              Loading categories...
-            </div>
-            <div *ngIf="itemForm.get('categoryId')?.invalid && itemForm.get('categoryId')?.touched" class="mt-1 text-sm text-red-600">
-              Category is required
-            </div>
-          </div>
-
-          <!-- Vendor/Brand -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Vendor/Brand *
-            </label>
-            <select 
-              formControlName="accId"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              [class.border-red-300]="itemForm.get('accId')?.invalid && itemForm.get('accId')?.touched"
-              [disabled]="isVendorsLoading">
-              <option value="">Select Vendor</option>
-              <option *ngFor="let vendor of vendors" [value]="vendor.accId">
-                {{ vendor.title }}
-              </option>
-            </select>
-            <div *ngIf="isVendorsLoading" class="mt-1 text-sm text-gray-500">
-              Loading vendors...
-            </div>
-            <div *ngIf="itemForm.get('accId')?.invalid && itemForm.get('accId')?.touched" class="mt-1 text-sm text-red-600">
-              Vendor is required
-            </div>
-          </div>
-
-          <!-- Product Code -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Product Code
-            </label>
-            <input 
-              type="text" 
-              formControlName="productCode"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="SKU or product code">
-          </div>
-
-          <!-- Unit -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Unit *
-            </label>
-            <select 
-              formControlName="unitId"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
-              <option *ngFor="let unit of units" [value]="unit.id">
-                {{ unit.name }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Pricing Information -->
-        <div class="border-t pt-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Pricing Information</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <!-- TP Rates -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                TP Rates *
-              </label>
-              <input 
-                type="number" 
-                formControlName="tpRates"
-                step="0.01"
-                min="0"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                [class.border-red-300]="itemForm.get('tpRates')?.invalid && itemForm.get('tpRates')?.touched">
-              <div *ngIf="itemForm.get('tpRates')?.invalid && itemForm.get('tpRates')?.touched" class="mt-1 text-sm text-red-600">
-                Valid TP rate is required
-              </div>
-            </div>
-
-            <!-- Cost Price -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Cost Price *
-              </label>
-              <input 
-                type="number" 
-                formControlName="costPrice"
-                step="0.01"
-                min="0"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                [class.border-red-300]="itemForm.get('costPrice')?.invalid && itemForm.get('costPrice')?.touched">
-              <div *ngIf="itemForm.get('costPrice')?.invalid && itemForm.get('costPrice')?.touched" class="mt-1 text-sm text-red-600">
-                Valid cost price is required
-              </div>
-            </div>
-
-            <!-- Cost Percent -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Cost Percent *
-              </label>
-              <input 
-                type="number" 
-                formControlName="costPercent"
-                step="0.01"
-                min="0"
-                max="100"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                [class.border-red-300]="itemForm.get('costPercent')?.invalid && itemForm.get('costPercent')?.touched">
-              <div *ngIf="itemForm.get('costPercent')?.invalid && itemForm.get('costPercent')?.touched" class="mt-1 text-sm text-red-600">
-                Valid cost percent is required
-              </div>
-            </div>
-
-            <!-- Sale Price -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Sale Price *
-              </label>
-              <input 
-                type="number" 
-                formControlName="salePrice"
-                step="0.01"
-                min="0"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                [class.border-red-300]="itemForm.get('salePrice')?.invalid && itemForm.get('salePrice')?.touched">
-              <div *ngIf="itemForm.get('salePrice')?.invalid && itemForm.get('salePrice')?.touched" class="mt-1 text-sm text-red-600">
-                Valid sale price is required
-              </div>
-            </div>
-          </div>
-
-          <!-- Profit Calculation -->
-          <div *ngIf="itemForm.get('costPrice')?.value && itemForm.get('salePrice')?.value" 
-               class="mt-4 p-3 bg-green-50 rounded-lg">
-            <div class="grid grid-cols-3 gap-4 text-sm">
-              <div>
-                <span class="text-gray-600">Cost:</span>
-                <span class="font-medium ml-2">{{ itemForm.get('costPrice')?.value | currency }}</span>
-              </div>
-              <div>
-                <span class="text-gray-600">Sale:</span>
-                <span class="font-medium ml-2">{{ itemForm.get('salePrice')?.value | currency }}</span>
-              </div>
-              <div>
-                <span class="text-gray-600">Profit:</span>
-                <span class="font-medium text-green-600 ml-2">
-                  {{ (itemForm.get('salePrice')?.value - itemForm.get('costPrice')?.value) | currency }}
-                  ({{ itemForm.get('costPercent')?.value }}%)
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stock Information -->
-        <div class="border-t pt-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Stock Information</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Stock Quantity -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                Stock Quantity *
-              </label>
-              <input 
-                type="number" 
-                formControlName="stockQty"
-                min="0"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                [class.border-red-300]="itemForm.get('stockQty')?.invalid && itemForm.get('stockQty')?.touched">
-              <div *ngIf="itemForm.get('stockQty')?.invalid && itemForm.get('stockQty')?.touched" class="mt-1 text-sm text-red-600">
-                Valid stock quantity is required
-              </div>
-              <div class="mt-1 text-sm text-gray-500">
-                Stock will be automatically tracked in Brand Ledger
-              </div>
-            </div>
-
-            <!-- Unit Display -->
-            <div class="flex items-end">
-              <div class="w-full p-3 bg-gray-50 rounded-lg">
-                <span class="text-sm text-gray-600">Unit:</span>
-                <span class="font-medium ml-2">{{ getUnitName(itemForm.get('unitId')?.value) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Additional Information -->
-        <div class="border-t pt-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="space-y-6">
           
-          <!-- Description -->
-          <div class="mb-4">
-            <label class="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
-            <textarea 
-              formControlName="description"
-              rows="3"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Product description, features, or notes..."></textarea>
+          <!-- Basic Information -->
+          <div class="form-section">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Product Name -->
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Product Name *
+                </label>
+                <input 
+                  type="text" 
+                  formControlName="name"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-300]="itemForm.get('name')?.invalid && itemForm.get('name')?.touched"
+                  placeholder="Enter product name">
+                <div *ngIf="itemForm.get('name')?.invalid && itemForm.get('name')?.touched" class="mt-1 text-sm text-red-600">
+                  <div *ngIf="itemForm.get('name')?.errors?.['required']">Product name is required</div>
+                  <div *ngIf="itemForm.get('name')?.errors?.['minlength']">Name must be at least 2 characters</div>
+                  <div *ngIf="itemForm.get('name')?.errors?.['maxlength']">Name cannot exceed 255 characters</div>
+                </div>
+              </div>
+
+              <!-- Category -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Category *
+                </label>
+                <select 
+                  formControlName="categoryId"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-300]="itemForm.get('categoryId')?.invalid && itemForm.get('categoryId')?.touched"
+                  [disabled]="isCategoriesLoading">
+                  <option value="">Select Category</option>
+                  <option *ngFor="let category of categories" [value]="category.id">
+                    {{ category.cateName }}
+                  </option>
+                </select>
+                <div *ngIf="isCategoriesLoading" class="mt-1 text-sm text-gray-500">
+                  Loading categories...
+                </div>
+                <div *ngIf="itemForm.get('categoryId')?.invalid && itemForm.get('categoryId')?.touched" class="mt-1 text-sm text-red-600">
+                  Category is required
+                </div>
+              </div>
+
+              <!-- Vendor/Brand -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Vendor/Brand *
+                </label>
+                <select 
+                  formControlName="accId"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-300]="itemForm.get('accId')?.invalid && itemForm.get('accId')?.touched"
+                  [disabled]="isVendorsLoading">
+                  <option value="">Select Vendor</option>
+                  <option *ngFor="let vendor of vendors" [value]="vendor.accId">
+                    {{ vendor.title }}
+                  </option>
+                </select>
+                <div *ngIf="isVendorsLoading" class="mt-1 text-sm text-gray-500">
+                  Loading vendors...
+                </div>
+                <div *ngIf="itemForm.get('accId')?.invalid && itemForm.get('accId')?.touched" class="mt-1 text-sm text-red-600">
+                  Vendor is required
+                </div>
+              </div>
+
+              <!-- Product Code -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Product Code
+                </label>
+                <input 
+                  type="text" 
+                  formControlName="productCode"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="SKU or product code">
+              </div>
+
+              <!-- Unit -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Unit *
+                </label>
+                <select 
+                  formControlName="unitId"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                  <option *ngFor="let unit of units" [value]="unit.id">
+                    {{ unit.name }}
+                  </option>
+                </select>
+              </div>
+            </div>
           </div>
 
-          <!-- Options -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <input 
-                type="checkbox" 
-                formControlName="isMostSoldItem"
-                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                id="isMostSoldItem">
-              <label for="isMostSoldItem" class="text-sm text-gray-700">
-                Mark as Most Sold Item
-              </label>
+          <!-- Pricing Information -->
+          <div class="form-section border-t pt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Pricing Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <!-- TP Rates -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  TP Rates *
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="tpRates"
+                  step="0.01"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-300]="itemForm.get('tpRates')?.invalid && itemForm.get('tpRates')?.touched"
+                  placeholder="0.00">
+                <div *ngIf="itemForm.get('tpRates')?.invalid && itemForm.get('tpRates')?.touched" class="mt-1 text-sm text-red-600">
+                  Valid TP rate is required
+                </div>
+              </div>
+
+              <!-- Cost Percent -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Cost Percent *
+                </label>
+                <div class="relative">
+                  <input 
+                    type="number" 
+                    formControlName="costPercent"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10"
+                    [class.border-red-300]="itemForm.get('costPercent')?.invalid && itemForm.get('costPercent')?.touched"
+                    placeholder="0">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500">%</span>
+                  </div>
+                </div>
+                <div *ngIf="itemForm.get('costPercent')?.invalid && itemForm.get('costPercent')?.touched" class="mt-1 text-sm text-red-600">
+                  Valid cost percent is required (0-100)
+                </div>
+              </div>
+
+              <!-- Cost Price (Auto-calculated) -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Cost Price *
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="costPrice"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg readonly-field transition-colors"
+                  readonly>
+                <div class="mt-1 text-xs text-gray-500">
+                  Auto-calculated: TP - (TP × Cost %)
+                </div>
+              </div>
+
+              <!-- Sale Percent -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Sale Percent *
+                </label>
+                <div class="relative">
+                  <input 
+                    type="number" 
+                    formControlName="salePercent"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10"
+                    [class.border-red-300]="itemForm.get('salePercent')?.invalid && itemForm.get('salePercent')?.touched"
+                    placeholder="0">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    <span class="text-gray-500">%</span>
+                  </div>
+                </div>
+                <div *ngIf="itemForm.get('salePercent')?.invalid && itemForm.get('salePercent')?.touched" class="mt-1 text-sm text-red-600">
+                  Valid sale percent is required (0-100)
+                </div>
+              </div>
+
+              <!-- Sale Price (Auto-calculated) -->
+              <div class="md:col-span-2 lg:col-span-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Sale Price *
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="salePrice"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg readonly-field transition-colors"
+                  readonly>
+                <div class="mt-1 text-xs text-gray-500">
+                  Auto-calculated: TP - (TP × Sale %)
+                </div>
+              </div>
             </div>
 
-            <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <input 
-                type="checkbox" 
-                formControlName="isActive"
-                class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                id="isActive">
-              <label for="isActive" class="text-sm text-gray-700">
-                Active Product
-              </label>
+            <!-- Pricing Summary -->
+            <div *ngIf="itemForm.get('tpRates')?.value > 0" class="mt-4 p-4 bg-blue-50 rounded-lg">
+              <h4 class="text-sm font-semibold text-blue-900 mb-2">Pricing Summary</h4>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span class="text-gray-600">TP Rates:</span>
+                  <span class="font-medium ml-2">{{ itemForm.get('tpRates')?.value | currency }}</span>
+                </div>
+                <div>
+                  <span class="text-gray-600">Cost Price:</span>
+                  <span class="font-medium ml-2">{{ itemForm.get('costPrice')?.value | currency }}</span>
+                  <span class="text-xs text-gray-500 ml-1">({{ itemForm.get('costPercent')?.value }}% off)</span>
+                </div>
+                <div>
+                  <span class="text-gray-600">Sale Price:</span>
+                  <span class="font-medium ml-2">{{ itemForm.get('salePrice')?.value | currency }}</span>
+                  <span class="text-xs text-gray-500 ml-1">({{ itemForm.get('salePercent')?.value }}% off)</span>
+                </div>
+                <div>
+                  <span class="text-gray-600">Profit Margin:</span>
+                  <span [class]="'font-medium ml-2 ' + (calculateProfitMargin() >= 0 ? 'text-green-600' : 'text-red-600')">
+                    {{ calculateProfitMargin() | number:'1.2-2' }}%
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Hidden Fields -->
-        <div class="hidden">
-          <input type="number" formControlName="branchId">
-          <input type="number" formControlName="userId">
-        </div>
+          <!-- Stock Information -->
+          <div class="form-section border-t pt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Stock Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <!-- Stock Quantity -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">
+                  Stock Quantity *
+                </label>
+                <input 
+                  type="number" 
+                  formControlName="stockQty"
+                  min="0"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  [class.border-red-300]="itemForm.get('stockQty')?.invalid && itemForm.get('stockQty')?.touched"
+                  placeholder="0">
+                <div *ngIf="itemForm.get('stockQty')?.invalid && itemForm.get('stockQty')?.touched" class="mt-1 text-sm text-red-600">
+                  Valid stock quantity is required
+                </div>
+                <div class="mt-1 text-sm text-gray-500">
+                  Stock will be automatically tracked in Brand Ledger when quantity > 0
+                </div>
+              </div>
 
-        <!-- Form Actions -->
-        <div class="flex justify-end space-x-3 pt-6 border-t">
-          <button 
-            type="button"
-            (click)="goBack()"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-            Cancel
-          </button>
-          <button 
-            type="submit"
-            [disabled]="isSubmitting || itemForm.invalid"
-            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
-            <span *ngIf="isSubmitting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
-            <span>{{ isSubmitting ? 'Saving...' : (isEdit ? 'Update Product' : 'Create Product') }}</span>
-          </button>
-        </div>
-      </form>
-    </div>
+              <!-- Unit Display -->
+              <div class="flex items-end">
+                <div class="w-full p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <span class="text-sm text-gray-600">Unit:</span>
+                  <span class="font-medium ml-2">{{ getUnitName(itemForm.get('unitId')?.value) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <!-- Help Information -->
-    <div class="mt-6 bg-blue-50 rounded-xl p-4">
-      <h3 class="text-sm font-semibold text-blue-900 mb-2">💡 Product Creation Tips</h3>
-      <ul class="text-sm text-blue-700 space-y-1">
-        <li>• <strong>Vendor/Brand:</strong> Must be an account with type 'Vendor' from your accounts</li>
-        <li>• <strong>Stock Tracking:</strong> When stock quantity is greater than 0, it automatically creates a Brand Ledger entry</li>
-        <li>• <strong>Pricing:</strong> Changing cost price or cost percent automatically calculates sale price</li>
-        <li>• <strong>Most Sold:</strong> Mark items that are frequently sold for quick access in POS</li>
-        <li>• <strong>Product Code:</strong> Should be unique for inventory tracking</li>
-      </ul>
+          <!-- Additional Information -->
+          <div class="form-section border-t pt-6">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+            
+            <!-- Description -->
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <textarea 
+                formControlName="description"
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Product description, features, or notes..."></textarea>
+            </div>
+
+            <!-- Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <input 
+                  type="checkbox" 
+                  formControlName="isMostSoldItem"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  id="isMostSoldItem">
+                <label for="isMostSoldItem" class="text-sm text-gray-700">
+                  Mark as Most Sold Item
+                </label>
+              </div>
+
+              <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <input 
+                  type="checkbox" 
+                  formControlName="isActive"
+                  class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  id="isActive">
+                <label for="isActive" class="text-sm text-gray-700">
+                  Active Product
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden Fields -->
+          <div class="hidden">
+            <input type="number" formControlName="branchId">
+            <input type="number" formControlName="userId">
+          </div>
+
+          <!-- Form Actions -->
+          <div class="flex justify-end space-x-3 pt-6 border-t">
+            <button 
+              type="button"
+              (click)="router.navigate(['/codes/items'])"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+              Cancel
+            </button>
+            <button 
+              type="submit"
+              [disabled]="isSubmitting || itemForm.invalid"
+              class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2">
+              <span *ngIf="isSubmitting" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+              <span>{{ isSubmitting ? 'Saving...' : (isEdit ? 'Update Product' : 'Create Product') }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Help Information -->
+      <div class="mt-6 bg-blue-50 rounded-xl p-4 border border-blue-200">
+        <h3 class="text-sm font-semibold text-blue-900 mb-2">💡 Pricing Calculation Guide</h3>
+        <ul class="text-sm text-blue-700 space-y-1">
+          <li>• <strong>TP Rates:</strong> The base/trade price of the product</li>
+          <li>• <strong>Cost Percent:</strong> Discount percentage from TP Rates to calculate your cost price</li>
+          <li>• <strong>Sale Percent:</strong> Discount percentage from TP Rates to calculate your sale price</li>
+          <li>• <strong>Formula:</strong> Cost/Sale Price = TP Rates - (TP Rates × Percent ÷ 100)</li>
+          <li>• <strong>Example:</strong> TP=100, Cost%=10 → Cost=90 | Sale%=20 → Sale=80</li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
