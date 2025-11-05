@@ -1,89 +1,238 @@
-<div class="relative h-screen w-full flex items-center justify-center bg-cover bg-center text-center px-5"
-    style="background-image:url(https://images.pexels.com/photos/260689/pexels-photo-260689.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=1&amp;w=500);">
-    <div class="absolute top-0 right-0 bottom-0 left-0 bg-gray-900 opacity-75"></div>
+<!-- components/codes/item-list/item-list.component.html -->
+<div class="p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900">Purchase Management</h1>
+      <p class="text-gray-600">Manage your Purchase</p>
+    </div>
+    <div class="flex space-x-3">
+      <!-- <button 
+        routerLink="/codes/categories"
+        class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
+        <span>🏷️</span>
+        <span>Categories</span>
+      </button> -->
+      <button 
+      (click)="createProduct()"
+        
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
+        <span>+</span>
+        <span>New Purchase</span>
+      </button>
+    </div>
+  </div>
 
-    <div class="z-50 flex flex-col justify-center text-white w-full h-screen">
-        <h1 class="text-5xl">We are <b>Almost</b> there!</h1>
-        <p>Stay tuned for something amazing!!!</p>
-
-        <div class="mt-10 mb-5">
-            <div class="shadow w-full bg-white mt-2 max-w-2xl mx-auto rounded-full">
-                <div class="rounded-full bg-indigo-600 text-xs leading-none text-center text-white py-1"
-                    style="width: 67%">67%</div>
-            </div>
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Total Purchases</p>
+          <p class="text-2xl font-bold text-gray-900">{{ purchase.length }}</p>
         </div>
-
-        <div class="mt-6 flex text-white mx-auto">
-            <a href="#">
-                <svg fill="currentColor" class="cursor-pointer h-6 mr-2" viewBox="0 0 24 24" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                    xmlns:serif="http://www.serif.com/"
-                    style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;">
-                    <path id="Twitter" d="M24,12c0,6.627 -5.373,12 -12,12c-6.627,0 -12,-5.373 -12,-12c0,-6.627
-                  5.373,-12 12,-12c6.627,0 12,5.373 12,12Zm-6.465,-3.192c-0.379,0.168
-                  -0.786,0.281 -1.213,0.333c0.436,-0.262 0.771,-0.676
-                  0.929,-1.169c-0.408,0.242 -0.86,0.418 -1.341,0.513c-0.385,-0.411
-                  -0.934,-0.667 -1.541,-0.667c-1.167,0 -2.112,0.945 -2.112,2.111c0,0.166
-                  0.018,0.327 0.054,0.482c-1.754,-0.088 -3.31,-0.929
-                  -4.352,-2.206c-0.181,0.311 -0.286,0.674 -0.286,1.061c0,0.733 0.373,1.379
-                  0.94,1.757c-0.346,-0.01 -0.672,-0.106 -0.956,-0.264c-0.001,0.009
-                  -0.001,0.018 -0.001,0.027c0,1.023 0.728,1.877 1.694,2.07c-0.177,0.049
-                  -0.364,0.075 -0.556,0.075c-0.137,0 -0.269,-0.014 -0.397,-0.038c0.268,0.838
-                  1.048,1.449 1.972,1.466c-0.723,0.566 -1.633,0.904 -2.622,0.904c-0.171,0
-                  -0.339,-0.01 -0.504,-0.03c0.934,0.599 2.044,0.949 3.237,0.949c3.883,0
-                  6.007,-3.217 6.007,-6.008c0,-0.091 -0.002,-0.183 -0.006,-0.273c0.413,-0.298
-                  0.771,-0.67 1.054,-1.093Z"></path>
-                </svg>
-            </a>
-            <a href="/#">
-                <svg fill="currentColor" class="cursor-pointer h-6 mr-2" viewBox="0 0 24 24" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                    xmlns:serif="http://www.serif.com/"
-                    style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;">
-                    <path id="Facebook" d="M24,12c0,6.627 -5.373,12 -12,12c-6.627,0 -12,-5.373 -12,-12c0,-6.627
-                  5.373,-12 12,-12c6.627,0 12,5.373
-                  12,12Zm-11.278,0l1.294,0l0.172,-1.617l-1.466,0l0.002,-0.808c0,-0.422
-                  0.04,-0.648 0.646,-0.648l0.809,0l0,-1.616l-1.295,0c-1.555,0 -2.103,0.784
-                  -2.103,2.102l0,0.97l-0.969,0l0,1.617l0.969,0l0,4.689l1.941,0l0,-4.689Z"></path>
-                </svg>
-            </a>
-            <a href="/#">
-                <svg fill="currentColor" class="cursor-pointer h-6 mr-2" viewBox="0 0 24 24" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                    xmlns:serif="http://www.serif.com/"
-                    style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;">
-                    <path id="Shape" d="M7.3,0.9c1.5,-0.6 3.1,-0.9 4.7,-0.9c1.6,0 3.2,0.3 4.7,0.9c1.5,0.6 2.8,1.5
-                  3.8,2.6c1,1.1 1.9,2.3 2.6,3.8c0.7,1.5 0.9,3 0.9,4.7c0,1.7 -0.3,3.2
-                  -0.9,4.7c-0.6,1.5 -1.5,2.8 -2.6,3.8c-1.1,1 -2.3,1.9 -3.8,2.6c-1.5,0.7
-                  -3.1,0.9 -4.7,0.9c-1.6,0 -3.2,-0.3 -4.7,-0.9c-1.5,-0.6 -2.8,-1.5
-                  -3.8,-2.6c-1,-1.1 -1.9,-2.3 -2.6,-3.8c-0.7,-1.5 -0.9,-3.1 -0.9,-4.7c0,-1.6
-                  0.3,-3.2 0.9,-4.7c0.6,-1.5 1.5,-2.8 2.6,-3.8c1.1,-1 2.3,-1.9
-                  3.8,-2.6Zm-0.3,7.1c0.6,0 1.1,-0.2 1.5,-0.5c0.4,-0.3 0.5,-0.8 0.5,-1.3c0,-0.5
-                  -0.2,-0.9 -0.6,-1.2c-0.4,-0.3 -0.8,-0.5 -1.4,-0.5c-0.6,0 -1.1,0.2
-                  -1.4,0.5c-0.3,0.3 -0.6,0.7 -0.6,1.2c0,0.5 0.2,0.9 0.5,1.3c0.3,0.4 0.9,0.5
-                  1.5,0.5Zm1.5,10l0,-8.5l-3,0l0,8.5l3,0Zm11,0l0,-4.5c0,-1.4 -0.3,-2.5
-                  -0.9,-3.3c-0.6,-0.8 -1.5,-1.2 -2.6,-1.2c-0.6,0 -1.1,0.2 -1.5,0.5c-0.4,0.3
-                  -0.8,0.8 -0.9,1.3l-0.1,-1.3l-3,0l0.1,2l0,6.5l3,0l0,-4.5c0,-0.6 0.1,-1.1
-                  0.4,-1.5c0.3,-0.4 0.6,-0.5 1.1,-0.5c0.5,0 0.9,0.2 1.1,0.5c0.2,0.3 0.4,0.8
-                  0.4,1.5l0,4.5l2.9,0Z"></path>
-                </svg>
-            </a>
-            <a href="#">
-                <svg fill="currentColor" class="cursor-pointer h-6 mr-2" viewBox="0 0 24 24" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve"
-                    xmlns:serif="http://www.serif.com/"
-                    style="fill-rule: evenodd; clip-rule: evenodd; stroke-linejoin: round; stroke-miterlimit: 2;">
-                    <path id="Combined-Shape" d="M12,24c6.627,0 12,-5.373 12,-12c0,-6.627 -5.373,-12 -12,-12c-6.627,0
-                  -12,5.373 -12,12c0,6.627 5.373,12 12,12Zm6.591,-15.556l-0.722,0c-0.189,0
-                  -0.681,0.208 -0.681,0.385l0,6.422c0,0.178 0.492,0.323
-                  0.681,0.323l0.722,0l0,1.426l-4.675,0l0,-1.426l0.935,0l0,-6.655l-0.163,0l-2.251,8.081l-1.742,0l-2.222,-8.081l-0.168,0l0,6.655l0.935,0l0,1.426l-3.74,0l0,-1.426l0.519,0c0.203,0
-                  0.416,-0.145 0.416,-0.323l0,-6.422c0,-0.177 -0.213,-0.385
-                  -0.416,-0.385l-0.519,0l0,-1.426l4.847,0l1.583,5.704l0.042,0l1.598,-5.704l5.021,0l0,1.426Z"></path>
-                </svg>
-            </a>
+        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <span class="text-blue-600 text-lg">📦</span>
         </div>
-
-
+      </div>
     </div>
 
+    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">
+            Low Stock</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ lowStockItems }}
+        </p>
+        </div>
+        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+          <span class="text-orange-600 text-lg">⚠️</span>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Regular Items</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{ regularItems}}</p>
+        </div>
+        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+          <span class="text-green-600 text-lg">🔥</span>
+        </div>
+      </div>
+    </div> -->
+
+    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm font-medium text-gray-600">Out of Stock</p>
+          <p class="text-2xl font-bold text-gray-900">
+            {{outOfStockItems}}</p>
+        </div>
+        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+          <span class="text-red-600 text-lg">❌</span>
+        </div>
+      </div>
+    </div> -->
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+    <form [formGroup]="searchForm" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+        <input 
+          type="text" 
+          formControlName="search"
+          placeholder="Search purchases..."
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+      </div>
+      
+      <!-- <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select 
+          formControlName="category"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">All Categories</option>
+          <option *ngFor="let category of categories" [value]="category.id">
+            {{ category.cateName }}
+          </option>
+        </select>
+      </div> -->
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Vendor</label>
+        <select 
+          formControlName="vendor"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+          <option value="">All Vendors</option>
+          <option *ngFor="let vendor of vendors" [value]="vendor.id">
+            {{ vendor.title }}
+          </option>
+        </select>
+      </div>
+
+      <!-- <div class="flex items-end">
+        <label class="flex items-center space-x-2">
+          <input 
+            type="checkbox" 
+            formControlName="lowStock"
+            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+          <span class="text-sm text-gray-700">Low Stock Only</span>
+        </label>
+      </div> -->
+      
+      <div class="flex items-end">
+        <button 
+          type="button"
+          (click)="searchForm.reset()"
+          class="w-full bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors">
+          Clear Filters
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Items Table -->
+  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div *ngIf="isLoading" class="p-8 text-center">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+      <p class="text-gray-600 mt-2">Loading purchase...</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredItems.length === 0" class="p-8 text-center">
+      <div class="text-gray-400 text-6xl mb-4">📦</div>
+      <p class="text-gray-600 text-lg">No purchases found</p>
+      <p class="text-gray-500">Try adjusting your search criteria or create a new purchase</p>
+      <button 
+        (click)="createProduct()"
+        class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        Create Your First Purchase
+      </button>
+    </div>
+
+    <div *ngIf="!isLoading && filteredItems.length > 0" class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Purchase Details
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Vendor/Brand
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Voucher Amount
+            </th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Paid Amount
+            </th>
+            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let item of filteredItems" class="hover:bg-gray-50 transition-colors">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <span class="text-blue-600 text-sm">📦</span>
+                </div>
+                <div>
+                  <div class="text-sm font-medium text-gray-900">{{ item.id }}</div>
+                  <div class="text-sm text-gray-500">{{ item.voucherDate }}</div>
+                  
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">{{ item.vendorName }}</div>
+              </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900">
+                Cost: {{ item.currentAmount| currency }}
+              </div>
+              <div class="text-sm font-medium text-green-600">
+                Sale: {{ item.paidAmount | currency }}
+              </div>
+              
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <!-- <div class="flex items-center space-x-3">
+                <div class="text-sm font-medium text-gray-900">
+                  {{ item.stockQty }} {{ getUnitName(item.unitId) }}
+                </div>
+                <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStockStatus(item.stockQty).color">
+                  {{ getStockStatus(item.stockQty).text }}
+                </span>
+              </div> -->
+              <!-- <button 
+                (click)="toggleMostSold(item)"
+                [class]="'mt-1 text-xs ' + (item.isMostSoldItem ? 'text-orange-600' : 'text-gray-500')">
+                {{ item.isMostSoldItem ? '⭐ Most Sold' : '☆ Mark as Most Sold' }}
+              </button> -->
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+              <div class="flex justify-end space-x-2">
+                <button 
+                  [routerLink]="['/purchases/', item.id, 'edit']"
+                  class="text-green-600 hover:text-green-900 px-3 py-1 rounded-lg hover:bg-green-50 transition-colors">
+                  Edit
+                </button>
+                <!-- (click)="deleteItem(item.id)" -->
+                <button 
+                  class="text-red-600 hover:text-red-900 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>

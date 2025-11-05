@@ -6,21 +6,28 @@ import { AccountService } from '../../Core/Services/account.service';
 import { CodeService } from '../../Core/Services/code.service';
 import { CodeCategory, CodeItem } from '../../Core/models/code.model';
 import { AccountCentral } from '../../Core/models/account.model';
-
+  import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Import FontAwesomeModule
+    import { faBoxesStacked,faList,faTriangleExclamation, faFire,faSackXmark, faBoxOpen } from '@fortawesome/free-solid-svg-icons'
 
 @Component({
   selector: 'app-item-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, ReactiveFormsModule,FontAwesomeModule],
   templateUrl: './item-list.component.html'
 })
+
 export class ItemListComponent implements OnInit {
   private codeService = inject(CodeService);
   private accountService = inject(AccountService);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-
+faBoxesStacked=faBoxesStacked;
+faList =faList;
+faFire=faFire;
+faEmptySet=faSackXmark;
+faBoxOpen=faBoxOpen;
+faTriangleExclamation=faTriangleExclamation;
   items: CodeItem[] = [];
   filteredItems: CodeItem[] = [];
   categories: CodeCategory[] = [];
@@ -70,31 +77,22 @@ export class ItemListComponent implements OnInit {
       }
     });
 
-this.updateCounts();
+
   }
-  updateCounts(){
-  this.updateLowStockCount(); 
-  this.updateReqularItemsCount();
-  this.updateOutOfStockCount();
-
-}
-updateLowStockCount() {
-  this.lowStockItems = this.items ? this.items.filter(i => i.stockQty <= 10).length : 0;
-}
- 
-updateOutOfStockCount() {
-  this.outOfStockItems = this.items ? this.items.filter(i => i.stockQty === 0).length : 0;
+  updateCounts(e:CodeItem[]){
+    this.lowStockItems = e ? e.filter(i => i.stockQty <= 10 && i.stockQty>0).length : 0;
+    this.outOfStockItems = e ? e.filter(osi=>osi.stockQty===0).length : 0;
+    this.regularItems=e ? e.filter(ri => ri.isMostSoldItem !== 1).length : 0;
+  
 }
 
-updateReqularItemsCount(){
-  this.regularItems=this.items ? this.items.filter(i => i.isMostSoldItem !== 1).length : 0;
-}
   loadItems() {
     this.isLoading = true;
     this.codeService.getItems().subscribe({
       next: (items) => {
         this.items = items;
         this.filteredItems = items;
+        this.updateCounts(items);
         this.isLoading = false;
       },
       error: (error) => {

@@ -10,7 +10,10 @@
       <button 
         routerLink="/codes/categories"
         class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2">
-        <span>🏷️</span>
+        <span>
+        <fa-icon [icon]="faList"></fa-icon>
+
+        </span>
         <span>Categories</span>
       </button>
       <button 
@@ -32,7 +35,9 @@
           <p class="text-2xl font-bold text-gray-900">{{ items.length }}</p>
         </div>
         <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-          <span class="text-blue-600 text-lg">📦</span>
+          <span class="text-yellow-600 text-2xl">
+            <fa-icon [icon]="faBoxesStacked"/>
+            </span>
         </div>
       </div>
     </div>
@@ -47,7 +52,9 @@
         </p>
         </div>
         <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-          <span class="text-orange-600 text-lg">⚠️</span>
+          <span class="text-yellow-400 text-2xl">
+            <fa-icon [icon]="faTriangleExclamation"/>
+          </span>
         </div>
       </div>
     </div>
@@ -60,7 +67,9 @@
             {{ regularItems}}</p>
         </div>
         <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-          <span class="text-green-600 text-lg">🔥</span>
+          <span class="text-red-600 text-2xl">
+            <fa-icon [icon]="faFire"/>
+            </span>
         </div>
       </div>
     </div>
@@ -73,7 +82,9 @@
             {{outOfStockItems}}</p>
         </div>
         <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-          <span class="text-red-600 text-lg">❌</span>
+          <span class="text-red-600 text-lg">
+            <fa-icon [icon]="faEmptySet"/>
+          </span>
         </div>
       </div>
     </div>
@@ -144,7 +155,7 @@
     </div>
 
     <div *ngIf="!isLoading && filteredItems.length === 0" class="p-8 text-center">
-      <div class="text-gray-400 text-6xl mb-4">📦</div>
+      <div class="text-gray-400 text-6xl mb-4"><fa-icon [icon]="faBoxOpen"/></div>
       <p class="text-gray-600 text-lg">No products found</p>
       <p class="text-gray-500">Try adjusting your search criteria or create a new product</p>
       <button 
@@ -180,7 +191,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span class="text-blue-600 text-sm">📦</span>
+                  <span class="text-blue-600 text-sm"><fa-icon [icon]="faBoxOpen"/></span>
                 </div>
                 <div>
                   <div class="text-sm font-medium text-gray-900">{{ item.name }}</div>

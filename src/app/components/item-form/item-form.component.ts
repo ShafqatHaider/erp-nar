@@ -145,6 +145,7 @@ export class ItemFormComponent implements OnInit {
     });
   }
 
+
   calculatePrices() {
     const tpRates = this.itemForm.get('tpRates')?.value || 0;
     const costPercent = this.itemForm.get('costPercent')?.value || 0;
@@ -164,6 +165,7 @@ export class ItemFormComponent implements OnInit {
   }
 
   onSubmit() {
+    debugger
     if (this.itemForm.valid) {
       this.isSubmitting = true;
       
@@ -171,7 +173,9 @@ export class ItemFormComponent implements OnInit {
       const formData: CreateCodeItem = {
         ...this.itemForm.getRawValue(), // This includes disabled fields
         costPrice: this.itemForm.get('costPrice')?.value,
-        salePrice: this.itemForm.get('salePrice')?.value
+        salePrice: this.itemForm.get('salePrice')?.value,
+        isActive:this.itemForm.get('isActive')?.value,
+        isMostSoldItem: this.itemForm.get('isMostSoldItem')?.value ? 1:0
       };
 
       const operation = this.isEdit 

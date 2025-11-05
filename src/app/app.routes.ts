@@ -13,6 +13,7 @@ import { HrListComponent } from './components/hr-list/hr-list.component';
 import { PayrollListComponent } from './components/payroll-list/payroll-list.component';
 import { SaleListComponent } from './components/sale-list/sale-list.component';
 import { PurchaseListComponent } from './components/purchase-list/purchase-list.component';
+import { PurchaseComponent } from './purchase_Components/purchase/purchase.component';
 
 export const routes: Routes = [
   { 
@@ -44,6 +45,8 @@ export const routes: Routes = [
   { path: 'hr/payroll', component: PayrollListComponent },
   { path: 'sales', component: SaleListComponent },
   { path: 'purchases', component: PurchaseListComponent },
+  { path: 'purchases/create', component: PurchaseComponent },
+  { path: 'purchases/:id/edit', component: PurchaseComponent },
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
     ]
   },
