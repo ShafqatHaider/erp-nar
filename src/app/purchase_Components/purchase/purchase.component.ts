@@ -164,6 +164,9 @@ isLoading = false;
     this.calculateTotalAmount();
   }
 
+
+
+
   onVendorChange(vendorId: number): void {
     if (vendorId) {
       this.isLoading=true
@@ -477,6 +480,7 @@ navigateToIndexPage(){
 selectAll(event: any) {
   event.target.select();
 }
+
 
 focusNextQty(index: number) {
   const inputs = this.qtyInputs.toArray();

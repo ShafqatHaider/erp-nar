@@ -28,21 +28,24 @@ private authService = inject(AuthService);
     // Check screen size for responsive sidebar
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
+    this.detectRoutedComponent()
   }
 currentPageTitle ="";
 getPageTitle(route: string): string {
 
-  if (route.includes('/purchase/add'))  return 'Add Purchase';
-  if (route.includes('/purchase/edit')) return 'Edit Purchase';
+  if (route.includes('/purchases/create'))  return 'Create New Purchase';
+  if (route.includes('/purchases/edit')) return 'Edit Purchase';
   if (route.includes('/purchases')) return 'Purchase List';
 
-  if (route.includes('/sales/add')) return 'Add Sale';
+  if (route.includes('/sales/create')) return 'Add Sale';
   if (route.includes('/sales/edit')) return 'Edit Sale';
   if (route.includes('/sales')) return 'Sales List';
 
-  if (route.includes('/products')) return 'Products';
-  if (route.includes('/vendors')) return 'Vendors';
-  if (route.includes('/customers')) return 'Customers';
+  if (route.includes('/codes/items')) return 'Product Management';
+  if (route.includes('/codes/categories')) return 'Product Categories';
+  if (route.includes('/codes/categories/create')) return 'Create New Product Categories';
+  if (route.includes('/accounts')) return 'Accounts Management';
+  if (route.includes('/accounts/create')) return 'Create New Account';
   if (route.includes('/dashboard')) return 'Dashboard';
 
   return 'Application';
