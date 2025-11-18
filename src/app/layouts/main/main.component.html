@@ -13,6 +13,7 @@
     <!-- Fixed Header -->
     <app-header 
       [user]="currentUser"
+       [pageTitle]="currentPageTitle"
       (sidebarToggle)="toggleSidebar()"
       (logout)="onLogout()"
       class="sticky top-0 z-30 flex-shrink-0">

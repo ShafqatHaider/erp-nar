@@ -15,8 +15,9 @@ export class HeaderComponent {
   @Input() user: User| null = null;
   @Output() sidebarToggle = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
+  @Input() pageTitle: string = '';
 
-  private authService = inject(AuthService);
+    private authService = inject(AuthService);
   private router = inject(Router);
 
   isDropdownOpen = false;
