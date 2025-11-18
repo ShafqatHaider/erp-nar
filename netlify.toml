@@ -1,6 +1,11 @@
 [build]
   command = "npm run build"
 
+[build.environment]
+
+[context.production]
+  publish = "dist/ERP-NAR/browser"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
