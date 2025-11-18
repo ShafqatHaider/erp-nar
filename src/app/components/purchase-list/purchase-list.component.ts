@@ -1,10 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, Inject, inject, OnInit } from '@angular/core';
 import { PurchaseService } from '../../Core/Services/purchase.service';
 import { AccountService } from '../../Core/Services/account.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Purchase, Vendor } from '../../Core/models/purchase.model';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-purchase-list',
@@ -34,10 +35,9 @@ export class PurchaseListComponent implements OnInit {
   constructor() {
     this.searchForm = this.fb.group({
       search: [''],
-      category: [''],
       vendor: [''],
-      lowStock: [false]
-    });
+      dateInput : ['']
+      });
   }
 
   ngOnInit() {
@@ -48,7 +48,7 @@ export class PurchaseListComponent implements OnInit {
       this.filterItems(value);
     });
 
-    // Check for category filter from URL
+    
     this.route.queryParams.subscribe(params => {
       if (params['category']) {
         this.searchForm.patchValue({
@@ -57,25 +57,8 @@ export class PurchaseListComponent implements OnInit {
       }
     });
 
-// this.updateCounts();
+
   }
-//   updateCounts(){
-//   this.updateLowStockCount(); 
-//   this.updateReqularItemsCount();
-//   this.updateOutOfStockCount();
-
-// }
-// updateLowStockCount() {
-//   this.lowStockItems = this.purchase ? this.purchase.filter(i => i. <= 10).length : 0;
-// }
- 
-// updateOutOfStockCount() {
-//   this.outOfStockItems = this.items ? this.items.filter(i => i.stockQty === 0).length : 0;
-// }
-
-// updateReqularItemsCount(){
-//   this.regularItems=this.items ? this.items.filter(i => i.isMostSoldItem !== 1).length : 0;
-// }
   loadItems() {
     this.isLoading = true;
     this.purchaseService.getAllPurchases().subscribe({
@@ -106,31 +89,44 @@ export class PurchaseListComponent implements OnInit {
     });
   }
 
+private pipe = Inject(DatePipe);
+
   filterItems(filters: any) {
-    let filtered = this.purchase;
+    debugger
+  let filtered = [...this.purchase]; 
 
-    if (filters.search) {
-      debugger
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(item => 
-        item.vendorId.toString().includes(searchLower) ||
-        item.voucherDate.toISOString().includes(searchLower) 
-        
-      )
-    }
+  const search = filters.search?.toLowerCase() || '';
+  const vendor = filters.vendor || '';
+  const fdate = filters.dateInput || '';
+  
 
-    if (filters.vendorId) {
-      filtered = filtered.filter(item => item.vendorId === +filters.vendorId);
-    }
 
-    if (filters.voucherDate) {
-      filtered = filtered.filter(item => item.voucherDate == filters.voucherDate);
-    }
-
+  if (search) {
+    debugger
+    filtered = filtered.filter(item => {
+      const vendorName = item.vendorName.toLowerCase();
+      const ids = item.id.toString();
     
 
-    this.filteredItems = filtered;
+      return vendorName.includes(search) || ids.includes(search);
+    });
   }
+
+ if (fdate) {
+  filtered = filtered.filter(item => {
+    if (!item.voucherDate) return false;
+    const itemDate = new Date(item.voucherDate).toISOString().split('T')[0];
+    return itemDate === fdate;
+  });
+}
+
+  if (vendor) {
+    filtered = filtered.filter(item => item.vendorName === vendor);
+  }
+
+  this.filteredItems = filtered;
+}
+
 
   // deleteItem(id: number) {
   //   if (confirm('Are you sure you want to delete this item?')) {

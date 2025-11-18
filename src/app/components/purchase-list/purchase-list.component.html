@@ -37,46 +37,7 @@
       </div>
     </div>
 
-    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">
-            Low Stock</p>
-          <p class="text-2xl font-bold text-gray-900">
-            {{ lowStockItems }}
-        </p>
-        </div>
-        <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-          <span class="text-orange-600 text-lg">⚠️</span>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Regular Items</p>
-          <p class="text-2xl font-bold text-gray-900">
-            {{ regularItems}}</p>
-        </div>
-        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-          <span class="text-green-600 text-lg">🔥</span>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- <div class="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-gray-600">Out of Stock</p>
-          <p class="text-2xl font-bold text-gray-900">
-            {{outOfStockItems}}</p>
-        </div>
-        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-          <span class="text-red-600 text-lg">❌</span>
-        </div>
-      </div>
-    </div> -->
+  
   </div>
 
   <!-- Filters -->
@@ -90,40 +51,28 @@
           placeholder="Search purchases..."
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
       </div>
-      
-      <!-- <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-        <select 
-          formControlName="category"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-          <option value="">All Categories</option>
-          <option *ngFor="let category of categories" [value]="category.id">
-            {{ category.cateName }}
-          </option>
-        </select>
-      </div> -->
+  
 
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Vendor</label>
+        <input type="date" 
+          formControlName="dateInput"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+          
+      </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1">Vendor</label>
         <select 
           formControlName="vendor"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
           <option value="">All Vendors</option>
-          <option *ngFor="let vendor of vendors" [value]="vendor.id">
+          <option *ngFor="let vendor of vendors" [value]="vendor.title" >
             {{ vendor.title }}
           </option>
         </select>
       </div>
 
-      <!-- <div class="flex items-end">
-        <label class="flex items-center space-x-2">
-          <input 
-            type="checkbox" 
-            formControlName="lowStock"
-            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500">
-          <span class="text-sm text-gray-700">Low Stock Only</span>
-        </label>
-      </div> -->
+      
       
       <div class="flex items-end">
         <button 
@@ -184,7 +133,7 @@
                 </div>
                 <div>
                   <div class="text-sm font-medium text-gray-900">{{ item.id }}</div>
-                  <div class="text-sm text-gray-500">{{ item.voucherDate }}</div>
+                  <div class="text-sm text-gray-500">{{ item.voucherDate | date:'dd-MM-yyyy'}}</div>
                   
                 </div>
               </div>
