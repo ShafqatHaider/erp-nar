@@ -23,6 +23,7 @@ export class PurchaseComponent implements OnInit {
   purchaseId: number | null = null;
   originalPurchase: PurchaseMain | null = null;
 createPurchase:PurchaseMainCreate | null=null;
+isLoading = false;
 @ViewChildren('qtyInput') qtyInputs!: QueryList<ElementRef>;
 
   constructor(
@@ -165,11 +166,13 @@ createPurchase:PurchaseMainCreate | null=null;
 
   onVendorChange(vendorId: number): void {
     if (vendorId) {
+      this.isLoading=true
       this.purchaseService.getVendorItems(vendorId).subscribe({
         next: (items) => {
           this.vendorItems = items;
           this.selectedVendorItems = [...items];
           this.populateItemsGrid();
+          this.isLoading=false
         },
         error: (error) => {
           console.error('Error loading vendor items:', error);
@@ -480,6 +483,13 @@ focusNextQty(index: number) {
   if (inputs[index + 1]) {
     inputs[index + 1].nativeElement.focus();
     inputs[index + 1].nativeElement.select();
+  }
+}
+focusPrevQty(index: number) {
+  const inputs = this.qtyInputs.toArray();
+  if (inputs[index - 1]) {
+    inputs[index - 1].nativeElement.focus();
+    inputs[index - 1].nativeElement.select();
   }
 }
 }

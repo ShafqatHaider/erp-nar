@@ -63,7 +63,8 @@
               Vendor
               <span class="text-red-500">*</span>
             </label>
-            <select formControlName="vendorId" (change)="onVendorChange(purchaseForm.get('vendorId')?.value)" [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ' +  
+            <select formControlName="vendorId" (change)="onVendorChange(purchaseForm.get('vendorId')?.value)" 
+            [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ' +  
                             (purchaseForm.get('vendorId')?.invalid && purchaseForm.get('vendorId')?.touched ? 
                              'border-red-300 bg-red-50' : 'border-gray-300')">
               <option value="" class="text-gray-500">Select a vendor</option>
@@ -179,6 +180,10 @@
             </span>
           </div>
 
+          <div *ngIf="isLoading" class="p-8 text-center">
+   <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+   <p class="text-gray-600 mt-2">Loading purchase...</p>
+ </div>
           <div class="border border-gray-200 rounded-lg overflow-hidden">
             <table class="w-full">
               <thead class="bg-gray-50 border-b border-gray-200">
@@ -230,10 +235,11 @@
 
                   <!-- Quantity -->
                   <td class="px-6 py-4">
-                    <input type="number" formControlName="qty" 
-                      (focus)="selectAll($event)" #qtyInput
-                       (keydown.arrowdown)="$event.preventDefault(); focusNextQty(i)"
-       (keydown.arrowup)="$event.preventDefault()"
+                    <input type="number" 
+                    formControlName="qty" 
+                    (focus)="selectAll($event)" #qtyInput
+                    (keydown.arrowdown)="$event.preventDefault(); focusNextQty(i)"
+                    (keydown.arrowup)="$event.preventDefault(); focusPrevQty(i)"
                       min="0"
                       class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
