@@ -7,6 +7,7 @@ export interface PurchaseMain {
   currentAmount: number;
   branchId: number;
   userId:number;
+  totalTpAmount:number;
   purchaseSubs: PurchaseSub[];
 }
 

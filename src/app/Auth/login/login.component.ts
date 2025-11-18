@@ -3,10 +3,11 @@ import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } 
 import { AuthService } from '../../Core/Services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -15,10 +16,11 @@ loginForm: FormGroup;
   isLoading = false;
   errorMessage = '';
 private route = inject(ActivatedRoute);
-  constructor(
+constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toastr:ToastrService
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -43,10 +45,13 @@ ngOnInit(): void {
         next: () => {
           // Get return url from route parameters or default to dashboard
           const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/dashboard';
+          this.toastr.success("You are loggin Successfully")
           this.router.navigateByUrl(returnUrl);
+
         },
         error: (error) => {
           this.errorMessage = error.error?.message || 'Login failed';
+          this.toastr.error(error.error?.message);
           this.isLoading = false;
         },
         complete: () => {

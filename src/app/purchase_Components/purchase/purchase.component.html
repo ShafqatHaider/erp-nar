@@ -3,12 +3,13 @@
     <div class="mb-8">
       <!-- Back Button -->
       <button class="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors mb-4 group">
-        <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none"
+          stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
         </svg>
         Back to Purchase Vouchers
       </button>
-      
+
       <!-- Title Section -->
       <div class="flex items-center justify-between">
         <div>
@@ -35,19 +36,22 @@
             </label>
             <div class="relative">
               <input type="date" formControlName="voucherDate"
-                     class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-                     [class]="(purchaseForm.get('voucherDate')?.invalid && purchaseForm.get('voucherDate')?.touched ? 
-                              'border-red-300 bg-red-50' : 'border-gray-300')">        
+                class="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                [class]="(purchaseForm.get('voucherDate')?.invalid && purchaseForm.get('voucherDate')?.touched ? 
+                              'border-red-300 bg-red-50' : 'border-gray-300')">
               <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                 </svg>
               </div>
             </div>
-            <div *ngIf="purchaseForm.get('voucherDate')?.invalid && purchaseForm.get('voucherDate')?.touched" 
-                 class="text-red-600 text-sm mt-1 flex items-center">
+            <div *ngIf="purchaseForm.get('voucherDate')?.invalid && purchaseForm.get('voucherDate')?.touched"
+              class="text-red-600 text-sm mt-1 flex items-center">
               <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"></path>
               </svg>
               Voucher date is required
             </div>
@@ -59,9 +63,7 @@
               Vendor
               <span class="text-red-500">*</span>
             </label>
-            <select formControlName="vendorId" 
-                    (change)="onVendorChange(purchaseForm.get('vendorId')?.value)"
-                    [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ' +  
+            <select formControlName="vendorId" (change)="onVendorChange(purchaseForm.get('vendorId')?.value)" [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors ' +  
                             (purchaseForm.get('vendorId')?.invalid && purchaseForm.get('vendorId')?.touched ? 
                              'border-red-300 bg-red-50' : 'border-gray-300')">
               <option value="" class="text-gray-500">Select a vendor</option>
@@ -69,10 +71,12 @@
                 {{ vendor.title }}
               </option>
             </select>
-            <div *ngIf="purchaseForm.get('vendorId')?.invalid && purchaseForm.get('vendorId')?.touched" 
-                 class="text-red-600 text-sm mt-1 flex items-center">
+            <div *ngIf="purchaseForm.get('vendorId')?.invalid && purchaseForm.get('vendorId')?.touched"
+              class="text-red-600 text-sm mt-1 flex items-center">
               <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"></path>
               </svg>
               Please select a vendor
             </div>
@@ -82,9 +86,9 @@
           <div class="lg:col-span-1">
             <label class="block text-sm font-medium text-gray-700 mb-2">Previous Balance</label>
             <div class="relative">
-              <input type="number" formControlName="prvBalance" 
-                     class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" 
-                     step="0.01" readonly>
+              <input type="number" formControlName="prvBalance"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" step="0.01"
+                readonly>
               <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <span class="text-sm">₹</span>
               </div>
@@ -93,13 +97,25 @@
 
           <!-- Current Amount -->
           <div class="lg:col-span-1">
+            <label class="block text-sm font-medium text-gray-700 mb-2">TP Rate Total </label>
+            <div class="relative">
+              <div class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600">
+                {{totalTpAmount}}
+              </div>
+
+              <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <span class="text-sm">Rs.</span>
+              </div>
+            </div>
+          </div>
+          <div class="lg:col-span-1">
             <label class="block text-sm font-medium text-gray-700 mb-2">Current Amount</label>
             <div class="relative">
-              <input type="number" formControlName="currentAmount" 
-                     class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" 
-                     step="0.01" readonly>
+              <input type="number" formControlName="currentAmount"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600" step="0.01"
+                readonly>
               <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                <span class="text-sm">₹</span>
+                <span class="text-sm">Rs.</span>
               </div>
             </div>
           </div>
@@ -114,18 +130,20 @@
               <span class="text-red-500">*</span>
             </label>
             <div class="relative">
-              <input type="number" formControlName="paidAmount" 
-                     [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10 ' +
+              <input type="number" formControlName="paidAmount"
+                [class]="'w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pr-10 ' +
                       (purchaseForm.get('paidAmount')?.invalid && purchaseForm.get('paidAmount')?.touched ? 'border-red-300 bg-red-50' : 'border-gray-300')"
-                     step="0.01" min="0" placeholder="0.00">
+                step="0.01" min="0" placeholder="0.00">
               <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <span class="text-sm">Rs.</span>
               </div>
             </div>
-            <div *ngIf="purchaseForm.get('paidAmount')?.invalid && purchaseForm.get('paidAmount')?.touched" 
-                 class="text-red-600 text-sm mt-1 flex items-center">
+            <div *ngIf="purchaseForm.get('paidAmount')?.invalid && purchaseForm.get('paidAmount')?.touched"
+              class="text-red-600 text-sm mt-1 flex items-center">
               <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                <path fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"></path>
               </svg>
               Paid amount must be greater than or equal to 0
             </div>
@@ -135,10 +153,10 @@
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Balance Due</label>
             <div class="relative">
-              <input type="number" 
-                     [value]="(purchaseForm.get('prvBalance')?.value + purchaseForm.get('currentAmount')?.value - purchaseForm.get('paidAmount')?.value) || 0"
-                     class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 font-semibold" 
-                     step="0.01" readonly>
+              <input type="number"
+                [value]="(purchaseForm.get('prvBalance')?.value + purchaseForm.get('currentAmount')?.value - purchaseForm.get('paidAmount')?.value) || 0"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 font-semibold"
+                step="0.01" readonly>
               <div class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                 <span class="text-sm">₹</span>
               </div>
@@ -152,86 +170,96 @@
             <div>
               <h3 class="text-lg font-semibold text-gray-900">Purchase Items</h3>
               <p class="text-sm text-gray-500 mt-1">
-                {{ getSelectedItemsCount() }} item(s) with quantity added • {{ purchaseItems.length }} total items available
+                {{ getSelectedItemsCount() }} item(s) with quantity added • {{ purchaseItems.length }} total items
+                available
               </p>
             </div>
             <span class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
               Add quantity to items you want to purchase
             </span>
           </div>
-          
+
           <div class="border border-gray-200 rounded-lg overflow-hidden">
             <table class="w-full">
               <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Details</th>
-                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Last Rate</th>
-                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Rate</th>
-                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20%">Item
+                    Details</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">TP Rate
+                  </th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage
+                  </th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                    Quantity</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Rate
+                  </th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
+                    Amount</th>
                 </tr>
               </thead>
               <tbody formArrayName="purchaseItems" class="bg-white divide-y divide-gray-200">
-                <tr *ngFor="let item of purchaseItems.controls; let i = index" [formGroupName]="i" 
-                    class="hover:bg-gray-50 transition-colors"
-                    [class.bg-green-50]="(item.get('qty')?.value || 0) > 0">
+                <tr *ngFor="let item of purchaseItems.controls; let i = index" [formGroupName]="i"
+                  class="hover:bg-gray-50 transition-colors" [class.bg-green-50]="(item.get('qty')?.value || 0) > 0">
                   <!-- Item Details -->
                   <td class="px-6 py-4">
                     <div>
                       <div class="font-medium text-gray-900">{{ item.get('itemName')?.value }}</div>
                       <div class="text-sm text-gray-500">{{ item.get('productCode')?.value }}</div>
                     </div>
-                    <div *ngIf="(item.get('qty')?.value || 0) > 0" class="text-xs text-green-600 font-medium mt-1 flex items-center">
+                    <div *ngIf="(item.get('qty')?.value || 0) > 0"
+                      class="text-xs text-green-600 font-medium mt-1 flex items-center">
                       <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                        <path fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"></path>
                       </svg>
                       Included in purchase
                     </div>
                   </td>
-                  
+
                   <!-- Last Rate -->
                   <td class="px-6 py-4 text-right text-sm text-gray-600">
-                    {{ item.get('lastPurchaseRate')?.value | number:'1.2-2' }}
+                    {{ item.get('lastPurchaseRate')?.value | number:'1.2-2' }} <br>
+                    {{item.get('tpTotal')?.value | number: '1.2-2'}}
                   </td>
-                  
+
                   <!-- Current Stock -->
                   <td class="px-6 py-4 text-right text-sm text-gray-600">
                     {{ item.get('currentStock')?.value }}
                   </td>
-                  
+
                   <!-- Quantity -->
                   <td class="px-6 py-4">
-                    <input type="number" formControlName="qty" 
-                           class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors" 
-                           [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
-                           step="0.01" min="0" placeholder="0.00">
-                    <div *ngIf="item.get('qty')?.invalid && item.get('qty')?.touched" 
-                         class="text-red-600 text-xs mt-1">
+                    <input type="number" formControlName="qty" (keydown.enter)="focusNextQty(i)"
+                      (focus)="selectAll($event)" #qtyInput
+                      class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
+                      step="0.01" min="0" placeholder="0.00">
+                    <div *ngIf="item.get('qty')?.invalid && item.get('qty')?.touched" class="text-red-600 text-xs mt-1">
                       Quantity must be positive
                     </div>
                   </td>
-                  
+
                   <!-- Rate -->
-                  <td class="px-6 py-4">
+                  <td class="px-6 py-4 ">
                     <div class="relative">
-                      <input type="number" formControlName="rate" 
-                             class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pl-6" 
-                             [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
-                             step="0.01" min="0" placeholder="0.00">
+                      <input type="number" formControlName="rate"
+                        class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pl-6"
+                        [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
+                        step="0.01" min="0" placeholder="0.00">
                       <div class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
                         Rs.
                       </div>
                     </div>
                   </td>
-                  
+
                   <!-- Amount -->
                   <td class="px-6 py-4 text-right">
                     <div class="relative">
-                      <input type="number" formControlName="lineAmount" 
-                             class="w-32 px-3 py-2 border rounded text-gray-600 font-medium text-right pr-6" 
-                             [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50'"
-                             readonly>
+                      <input type="number" formControlName="lineAmount"
+                        class="w-32 px-3 py-2 border rounded text-gray-600 font-medium text-right pr-6"
+                        [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300 bg-gray-50'"
+                        readonly>
                       <div class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
                         Rs.
                       </div>
@@ -246,11 +274,12 @@
           <div class="mt-4 p-4 bg-blue-50 rounded-lg">
             <div class="flex items-start">
               <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <div>
                 <p class="text-sm text-blue-700">
-                  <strong>Note:</strong> Only items with quantity greater than 0 will be included in the purchase. 
+                  <strong>Note:</strong> Only items with quantity greater than 0 will be included in the purchase.
                   You can add quantity to specific items you want to purchase.
                 </p>
               </div>
@@ -259,10 +288,12 @@
         </div>
 
         <!-- No Items Message -->
-        <div *ngIf="purchaseItems.length === 0 && purchaseForm.get('vendorId')?.value" 
-             class="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg mb-8">
+        <div *ngIf="purchaseItems.length === 0 && purchaseForm.get('vendorId')?.value"
+          class="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg mb-8">
           <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+            </path>
           </svg>
           <h3 class="text-lg font-medium text-gray-900 mb-2">No items available</h3>
           <p class="text-gray-500 mb-4">Selected vendor doesn't have any items associated.</p>
@@ -274,21 +305,20 @@
 
         <!-- Action Buttons -->
         <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
-          <button type="button" 
-                  (click)="resetForm()"
-                  class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium">
+          <button type="button" (click)="resetForm()"
+            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium">
             Reset Form
           </button>
-          <button type="submit" 
-                  [disabled]="isSubmitting || purchaseForm.invalid || !hasItemsWithQuantity()"
-                  [class]="'px-8 py-3 rounded-lg font-medium transition-colors ' + 
+          <button type="submit" [disabled]="isSubmitting || purchaseForm.invalid || !hasItemsWithQuantity()" [class]="'px-8 py-3 rounded-lg font-medium transition-colors ' + 
                           (isSubmitting || purchaseForm.invalid || !hasItemsWithQuantity() ? 
                            'bg-blue-400 cursor-not-allowed text-white' : 
                            'bg-blue-600 hover:bg-blue-700 text-white')">
             <div class="flex items-center space-x-2">
               <svg *ngIf="isSubmitting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path class="opacity-75" fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                </path>
               </svg>
               <span>{{ isSubmitting ? 'Saving Purchase...' : 'Save Purchase' }}</span>
             </div>
