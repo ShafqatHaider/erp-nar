@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Vendor, VendorItem, Purchase, PurchaseMainCreate, PurchaseMain } from '../../Core/models/purchase.model';
 import { PurchaseService } from '../../Core/Services/purchase.service';
 import { CommonModule, DatePipe } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-purchase',
@@ -13,7 +14,7 @@ import { CommonModule, DatePipe } from '@angular/common';
   styleUrl: './purchase.component.scss'
 })
 export class PurchaseComponent implements OnInit {
-  isEdit: boolean = true;
+  isEdit: boolean = false;
   purchaseForm: FormGroup;
   vendors: Vendor[] = [];
   vendorItems: VendorItem[] = [];
@@ -29,7 +30,8 @@ createPurchase:PurchaseMainCreate | null=null;
     private purchaseService: PurchaseService,
     private route: ActivatedRoute,
     private router: Router,
-    private pipe:DatePipe
+    private pipe:DatePipe,
+    private toastService: ToastrService
   ) {
     this.purchaseForm = this.createForm();
   }
@@ -42,7 +44,9 @@ createPurchase:PurchaseMainCreate | null=null;
   getPurchaseId(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
+
       if (id) {
+        this.isEdit=true;
         this.purchaseId = +id;
         this.loadPurchaseData(this.purchaseId);
       }
@@ -52,7 +56,7 @@ createPurchase:PurchaseMainCreate | null=null;
   createForm(): FormGroup {
     return this.fb.group({
       voucherDate: [new Date().toISOString().substring(0, 10), Validators.required],
-      vendorId: [null, Validators.required],
+      vendorId: Number([null, Validators.required]),
       paidAmount: [0, [Validators.required, Validators.min(0)]],
       prvBalance: [0, [Validators.required, Validators.min(0)]],
       currentAmount: [0, [Validators.required, Validators.min(0)]],
@@ -103,7 +107,7 @@ createPurchase:PurchaseMainCreate | null=null;
  
     this.purchaseForm.patchValue({
       voucherDate: this.pipe.transform(purchase.voucherDate,'yyyy-MM-dd'),//? purchase.voucherDate.toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10),
-      vendorId: purchase.vendorId,
+      vendorId: Number(purchase.vendorId),
       paidAmount: purchase.paidAmount || 0,
       prvBalance: purchase.prvBalance || 0,
       currentAmount: purchase.currentAmount || 0,
@@ -222,7 +226,7 @@ calculateLineAmount(itemGroup: FormGroup): void {
 }
 totalTpAmount=0;
 calculateTotalAmount(): void {
-  debugger
+  // debugger
   let totalAmount = 0;
   this.totalTpAmount = 0;
 
@@ -268,52 +272,147 @@ calculateTotalAmount(): void {
     return this.getSelectedItemsCount() > 0;
   }
 
-  onSubmit(): void {
-    debugger
-    if (this.purchaseForm.valid && this.hasItemsWithQuantity() && this.purchaseId) {
-      this.isSubmitting = true;
+  // onSubmit(): void {
+  //   debugger
+  //   try
+  //   {    if (this.purchaseForm.valid && this.hasItemsWithQuantity() && this.purchaseId) {
+  //     this.isSubmitting = true;
 
-      const formValue = this.purchaseForm.value;
-      const purchaseData: any = {
-        id: this.purchaseId,
-        voucherDate: formValue.voucherDate,
-        vendorId: formValue.vendorId,
-        paidAmount: formValue.paidAmount,
-        prvBalance: formValue.prvBalance,
-        currentAmount: formValue.currentAmount,
-        branchId: formValue.branchId,
-        userId: formValue.userId,
-        purchaseSubs: formValue.purchaseItems
-          .filter((item: any) => item.qty > 0) // Only include items with quantity > 0
-          .map((item: any) => ({
-            itemId: item.itemId,
-            qty: item.qty,
-            rate: item.rate,
-            lineAmount: item.lineAmount,
-            branchId: formValue.branchId
-          }))
-      };
+  //     const formValue = this.purchaseForm.value;
 
-      this.purchaseService.updatePurchase(this.purchaseId, purchaseData).subscribe({
-        next: (response) => {
-          alert('Purchase updated successfully!');
-          this.isSubmitting = false;
-          this.router.navigate(['/purchases']); // Navigate back to purchases list
-        },
-        error: (error) => {
-          console.error('Error updating purchase:', error);
-          alert('Error updating purchase. Please try again.');
-          this.isSubmitting = false;
-        }
-      });
-    } else {
+  //     console.log(this.purchaseForm.value)
+  //     const purchaseData: any = {
+  //       id: this.purchaseId,
+  //       voucherDate: formValue.voucherDate,
+  //       vendorId: formValue.vendorId,
+  //       paidAmount: formValue.paidAmount,
+  //       prvBalance: formValue.prvBalance,
+  //       currentAmount: formValue.currentAmount,
+  //       branchId: formValue.branchId,
+  //       userId: formValue.userId,
+  //       purchaseSubs: formValue.purchaseItems
+  //         .filter((item: any) => item.qty > 0) // Only include items with quantity > 0
+  //         .map((item: any) => ({
+  //           itemId: item.itemId,
+  //           qty: item.qty,
+  //           rate: item.rate,
+  //           lineAmount: item.lineAmount,
+  //           branchId: formValue.branchId
+  //         }))
+  //     };
+
+  //     this.purchaseService.updatePurchase(this.purchaseId, purchaseData).subscribe({
+  //       next: (response) => {
+  //         alert('Purchase updated successfully!');
+  //         this.isSubmitting = false;
+  //         this.router.navigate(['/purchases']); // Navigate back to purchases list
+  //       },
+  //       error: (error) => {
+  //         console.error('Error updating purchase:', error);
+  //         alert('Error updating purchase. Please try again.');
+  //         this.isSubmitting = false;
+  //       }
+  //     });
+  //   } else {
+  //     this.markFormGroupTouched(this.purchaseForm);
+  //     if (!this.hasItemsWithQuantity()) {
+  //       alert('Please add quantity for at least one item to proceed with the purchase.');
+  //     }
+  //   }
+  // }
+  // catch(err){
+  //   console.error(err)
+  // }
+  // }
+onSubmit(): void {
+  debugger;
+
+  try {
+
+    console.log("Form valid:", this.purchaseForm.valid);
+    console.log("Has items:", this.hasItemsWithQuantity());
+    console.log("Purchase ID:", this.purchaseId);
+
+    if (!this.purchaseForm.valid) {
+      console.warn("Form is invalid.");
       this.markFormGroupTouched(this.purchaseForm);
-      if (!this.hasItemsWithQuantity()) {
-        alert('Please add quantity for at least one item to proceed with the purchase.');
-      }
+      return;
+    }
+
+    if (!this.hasItemsWithQuantity()) {
+      alert("Please add quantity for at least one item.");
+      return;
+    }
+    if(this.isEdit){
+    if (!this.purchaseId) {
+      console.warn("Purchase ID missing!");
+      return;
     }
   }
 
+    this.isSubmitting = true;
+
+    const formValue = this.purchaseForm.value;
+
+    const purchaseData = {
+      id: this.isEdit?this.purchaseId : 0,
+      voucherDate: formValue.voucherDate,
+      vendorId: formValue.vendorId,
+      paidAmount: formValue.paidAmount,
+      prvBalance: formValue.prvBalance,
+      currentAmount: formValue.currentAmount,
+      branchId: formValue.branchId,
+      userId: formValue.userId,
+      purchaseSubs: formValue.purchaseItems
+        .filter((item: any) => item.qty > 0)
+        .map((item: any) => ({
+          itemId: item.itemId,
+          qty: item.qty,
+          rate: item.rate,
+          lineAmount: item.lineAmount,
+          branchId: formValue.branchId
+        }))
+    };
+
+
+if(this.isEdit){
+    this.purchaseService.updatePurchase(Number(this.purchaseId), purchaseData).subscribe({
+      next: () => {
+        this.toastService.success("Purchase updated successfully!");
+        this.isSubmitting = false;
+        this.navigateToIndexPage()
+      },
+      error: (error) => {
+        console.error("Error updating purchase:", error);
+        this.toastService.error("Error updating purchase");
+        this.isSubmitting = false;
+      }
+    });
+  }else{
+
+    this.purchaseService.createPurchase(purchaseData).subscribe({
+      next: ()=>{
+        this.toastService.success("Purchase generated successfully");
+        this.isSubmitting=false;
+       this.navigateToIndexPage()
+      },
+      error:(error)=>{
+        console.error("error saving purcahse: ", error);
+        this.toastService.error("Error generating purchase");
+        this.isSubmitting=false;
+      }
+    })
+  }
+
+
+  } catch (err) {
+    console.error("Submit crashed:", err);
+  }
+}
+
+navigateToIndexPage(){
+  this.router.navigate(["/purchases"]);
+}
   resetForm(): void {
     if (this.originalPurchase) {
       this.populateForm(this.originalPurchase);
@@ -336,6 +435,7 @@ calculateTotalAmount(): void {
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
+    debugger
     Object.keys(formGroup.controls).forEach(key => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup) {
