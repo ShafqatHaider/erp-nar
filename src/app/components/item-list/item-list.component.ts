@@ -39,7 +39,7 @@ faTriangleExclamation=faTriangleExclamation;
   lowStockItems=0;
   regularItems=0;
   outOfStockItems=0;
-  // Mock units - in real app, fetch from API
+  
   units = [
     { id: 1, name: 'Piece' },
     { id: 2, name: 'Kg' },
