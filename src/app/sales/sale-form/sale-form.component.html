@@ -1,0 +1,538 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">
+      {{ isEdit ? 'Edit Sale' : 'Create New Sale' }}
+    </h1>
+    <button 
+      routerLink="/sales" 
+      class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+    >
+      Back to List
+    </button>
+  </div>
+ 
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Sale Form -->
+  <form *ngIf="!loading" [formGroup]="saleForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Main Sale Information -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Sale Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Bill Date -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Bill Date *</label>
+          <input 
+            type="date" 
+            formControlName="billDate"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="saleForm.get('billDate')?.invalid && saleForm.get('billDate')?.touched"
+          >
+          <div *ngIf="saleForm.get('billDate')?.invalid && saleForm.get('billDate')?.touched" class="text-red-500 text-xs mt-1">
+            Bill date is required
+          </div>
+        </div>
+
+        <!-- Account ID -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Account ID *</label>
+          <input 
+            type="number" 
+            formControlName="accId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="saleForm.get('accId')?.invalid && saleForm.get('accId')?.touched"
+          >
+          <div *ngIf="saleForm.get('accId')?.invalid && saleForm.get('accId')?.touched" class="text-red-500 text-xs mt-1">
+            Account ID is required
+          </div>
+        </div>
+
+        <!-- Account Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Account Name *</label>
+          <input 
+            type="text" 
+            formControlName="accName"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            [class.border-red-500]="saleForm.get('accName')?.invalid && saleForm.get('accName')?.touched"
+          >
+          <div *ngIf="saleForm.get('accName')?.invalid && saleForm.get('accName')?.touched" class="text-red-500 text-xs mt-1">
+            Account name is required
+          </div>
+        </div>
+
+        <!-- Branch ID -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Branch ID *</label>
+          <input 
+            type="number" 
+            formControlName="branchId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Sale Items Grid -->
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-gray-800">Sale Items</h2>
+        <div class="text-sm text-gray-600">
+          Total Items: {{ saleItems.length }} | Selected: {{ getSelectedItemsCount() }}
+        </div>
+      </div>
+
+      <!-- Loading State for Items -->
+      <div *ngIf="isLoading" class="p-8 text-center">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p class="text-gray-600 mt-2">Loading items...</p>
+      </div>
+
+      <!-- Items Grid -->
+      <div *ngIf="!isLoading && saleItems.length > 0" class="mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900">Sales Items Grid</h3>
+            <p class="text-sm text-gray-500 mt-1">
+              {{ getSelectedItemsCount() }} item(s) with quantity added • {{ saleItems.length }} total items available
+            </p>
+          </div>
+          <span class="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">
+            Add quantity to items you want to sale
+          </span>
+        </div>
+
+        <div class="border border-gray-200 rounded-lg overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full min-w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20%">Item Details</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">TP Rate</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Percentage %</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Quantity</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Rate</th>
+                  <th class="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Amount</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="saleItems" class="bg-white divide-y divide-gray-200">
+                <tr *ngFor="let item of saleItems.controls; let i = index" [formGroupName]="i"
+                  class="hover:bg-gray-50 transition-colors" [class.bg-green-50]="(item.get('qty')?.value || 0) > 0">
+                  
+                  <!-- Item Details -->
+                  <td class="px-6 py-4">
+                    <div>
+                      <div class="font-medium text-gray-900">{{ item.get('itemName')?.value }}</div>
+                      <div class="text-sm text-gray-500">{{ item.get('productCode')?.value }}</div>
+                    </div>
+                    <div *ngIf="(item.get('qty')?.value || 0) > 0"
+                      class="text-xs text-green-600 font-medium mt-1 flex items-center">
+                      <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clip-rule="evenodd"></path>
+                      </svg>
+                      Included in sale
+                    </div>
+                  </td>
+
+                  <!-- TP Rate -->
+                  <td class="px-6 py-4 text-right text-sm text-gray-600">
+                    {{ item.get('lastPurchaseRate')?.value | number:'1.2-2' }}
+                  </td>
+
+                  <!-- Percentage -->
+                  <td class="px-6 py-4 text-right">
+                     {{ item.get('percentage')?.value }}
+                    <!-- <input 
+                      type="number" 
+                      formControlName="percentage"
+                      class="w-20 px-2 py-1 border border-gray-300 rounded text-right focus:ring-2 focus:ring-blue-500"
+                      min="0" 
+                      max="100" 
+                      step="0.01"
+                      placeholder="0%"
+                    > -->
+                  </td>
+
+                  <!-- Current Stock -->
+                  <td class="px-6 py-4 text-right text-sm text-gray-600">
+                    {{ item.get('currentStock')?.value | number:'1.0-0' }}
+                  </td>
+
+                  <!-- Quantity -->
+                  <td class="px-6 py-4">
+                    <input 
+                      type="number" 
+                      formControlName="qty" 
+                      #qtyInput
+                      (focus)="selectAll($event)" 
+                      (keydown.arrowdown)="$event.preventDefault(); focusNextQty(i)"
+                      (keydown.arrowup)="$event.preventDefault(); focusPrevQty(i)"
+                      [min]=0
+                      class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
+                      step="1" 
+                      min="0" 
+                      placeholder="0"
+                    >
+                    <div *ngIf="item.get('qty')?.invalid && item.get('qty')?.touched" class="text-red-600 text-xs mt-1">
+                      Quantity must be positive
+                    </div>
+                  </td>
+
+                  <!-- Rate -->
+                  <td class="px-6 py-4">
+                    <div class="relative">
+                      <input 
+                        type="number" 
+                        formControlName="rate"
+                        class="w-24 px-3 py-2 border rounded text-right focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors pl-6"
+                        [class]="(item.get('qty')?.value || 0) > 0 ? 'border-green-300 bg-green-50' : 'border-gray-300'"
+                        step="0.01" 
+                        min="0" 
+                        placeholder="0.00"
+                        readonly
+                      >
+                      <div class="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
+                        Rs.
+                      </div>
+                    </div>
+                  </td>
+
+                  <!-- Amount -->
+                  <td class="px-6 py-4 text-right">
+                    <div class="relative">
+                      <input 
+                        type="number" 
+                        formControlName="lineAmount"
+                        class="w-32 px-3 py-2 border rounded text-gray-600 font-medium text-right pr-6 bg-gray-50"
+                        readonly
+                      >
+                      <div class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 text-xs">
+                        Rs.
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Total Amount from Grid -->
+        <div class="mt-6 pt-4 border-t border-gray-200">
+          <div class="flex justify-between items-center">
+            <span class="text-lg font-semibold text-gray-800">Total Amount:</span>
+            <span class="text-2xl font-bold text-blue-600">Rs. {{ getGridTotalAmount() | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Helper Text -->
+        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+          <div class="flex items-start">
+            <svg class="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+              <p class="text-sm text-blue-700">
+                <strong>Note:</strong> Only items with quantity greater than 0 will be included in the sale.
+                Use arrow keys (↑↓) to navigate between quantity fields quickly.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Items Message -->
+      <div *ngIf="!isLoading && saleItems.length === 0" class="text-center py-12 border-2 border-dashed border-gray-300 rounded-lg">
+        <svg class="w-12 h-12 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
+          </path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No items available</h3>
+        <p class="text-gray-500 mb-4">There are no items to display.</p>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex justify-end space-x-4">
+      <button 
+        type="button" 
+        routerLink="/sales"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+      >
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        [disabled]="submitting || !hasItemsWithQuantity()"
+        class="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+      >
+        {{ submitting ? 'Saving...' : (isEdit ? 'Update Sale' : 'Create Sale') }}
+      </button>
+    </div>
+  </form>
+
+
+  <!-- Receipt Section -->
+<div *ngIf="showReceiptSection" id="receipt-section" class="bg-white rounded-lg shadow-md p-6 mt-8 border-2 border-green-200">
+  <div class="flex items-center mb-6">
+    <div class="bg-green-100 p-2 rounded-full mr-4">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-gray-800">Sale Created Successfully!</h2>
+      <p class="text-gray-600">Invoice #{{createdSaleId}} has been created. Now you can add payment receipt.</p>
+    </div>
+  </div>
+
+  <!-- Receipt Form -->
+ 
+</div>
+
+<form [formGroup]="receiptForm" class="space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Left Column - Basic Info -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Receipt Information</h3>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Receipt Date *</label>
+          <input 
+            type="date" 
+            formControlName="receiptDate"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
+          <select 
+            formControlName="paymentMethod"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="Cash">Cash</option>
+            <option value="Card">Card</option>
+            <option value="Bank Transfer">Bank Transfer</option>
+            <option value="Digital Wallet">Digital Wallet</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Total Amount *</label>
+          <div class="relative">
+            <input 
+              type="number" 
+              formControlName="totalAmount"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50 pl-8"
+              readonly
+            >
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rs.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+          <textarea 
+            formControlName="notes"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Any additional notes..."
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Right Column - Denominations -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-semibold text-gray-800 border-b pb-2">Cash Denominations</h3>
+        <p class="text-sm text-gray-600 mb-4">Enter the count of each denomination received</p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <!-- 5000 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">5000 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="fiveThousands"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 1000 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">1000 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="thousands"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 500 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">500 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="fiveHundreds"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 100 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">100 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="hundreds"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 50 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">50 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="fifties"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 20 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">20 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="twenties"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 10 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">10 Rs Notes</label>
+            <input 
+              type="number" 
+              formControlName="tens"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 5 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">5 Rs Coins</label>
+            <input 
+              type="number" 
+              formControlName="fives"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 2 Rupees -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">2 Rs Coins</label>
+            <input 
+              type="number" 
+              formControlName="twos"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+
+          <!-- 1 Rupee -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">1 Rs Coins</label>
+            <input 
+              type="number" 
+              formControlName="ones"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              min="0"
+              placeholder="0"
+            >
+          </div>
+        </div>
+
+        <!-- Other Amount -->
+        <div class="mt-4">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Other Amount (Cheque/Digital/etc.)</label>
+          <div class="relative">
+            <input 
+              type="number" 
+              formControlName="otherAmount"
+              (input)="onDenominationChange()"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pl-8"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+            >
+            <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rs.</span>
+          </div>
+        </div>
+
+        <!-- Calculated Total -->
+        <div class="bg-blue-50 p-4 rounded-lg mt-4">
+          <div class="flex justify-between items-center">
+            <span class="text-lg font-semibold text-blue-800">Calculated Total:</span>
+            <span class="text-2xl font-bold text-blue-800">Rs. {{ receiptForm.get('totalAmount')?.value | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Receipt Actions -->
+    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+      <button 
+        type="button" 
+        (click)="onSkipReceipt()"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+      >
+        Skip Receipt
+      </button>
+      <button 
+        type="button" 
+        (click)="onSaveReceipt()"
+        [disabled]="isSavingReceipt || !hasDenominations()"
+        class="bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+      >
+        {{ isSavingReceipt ? 'Saving Receipt...' : 'Save Receipt' }}
+      </button>
+    </div>
+  </form>
+</div>

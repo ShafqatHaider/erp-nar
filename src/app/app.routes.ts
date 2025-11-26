@@ -11,9 +11,11 @@ import { ItemListComponent } from './components/item-list/item-list.component';
 import { ItemFormComponent } from './components/item-form/item-form.component';
 import { HrListComponent } from './components/hr-list/hr-list.component';
 import { PayrollListComponent } from './components/payroll-list/payroll-list.component';
-import { SaleListComponent } from './components/sale-list/sale-list.component';
+
 import { PurchaseListComponent } from './components/purchase-list/purchase-list.component';
 import { PurchaseComponent } from './purchase_Components/purchase/purchase.component';
+import { SaleListComponent } from './sales/sale-list/sale-list.component';
+import { SaleFormComponent } from './sales/sale-form/sale-form.component';
 
 export const routes: Routes = [
   { 
@@ -44,6 +46,8 @@ export const routes: Routes = [
   { path: 'hr', component: HrListComponent },
   { path: 'hr/payroll', component: PayrollListComponent },
   { path: 'sales', component: SaleListComponent },
+  { path: 'sales/create', component: SaleFormComponent },
+  { path: 'sales/:id/edit', component: SaleFormComponent },
   { path: 'purchases', component: PurchaseListComponent },
   { path: 'purchases/create', component: PurchaseComponent },
   { path: 'purchases/:id/edit', component: PurchaseComponent },

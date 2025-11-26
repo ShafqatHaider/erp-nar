@@ -1,0 +1,113 @@
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Sales Management</h1>
+    <button 
+      routerLink="/sales/create" 
+      class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-colors"
+    >
+      New Sale
+    </button>
+  </div>
+
+  <!-- Date Filter -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+        <input 
+          type="date" 
+          [(ngModel)]="startDate" 
+          (change)="loadSales()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">End Date</label>
+        <input 
+          type="date" 
+          [(ngModel)]="endDate" 
+          (change)="loadSales()"
+          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+      </div>
+      <div class="flex items-end">
+        <button 
+          (click)="loadSales()"
+          class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md font-semibold transition-colors"
+        >
+          Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex justify-center items-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Sales Table -->
+  <div *ngIf="!loading" class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice #</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Items</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let sale of sales" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{sale.id}}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{sale.billDate | date:'mediumDate'}}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{sale.accName}}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{sale.saleSubs.length}} items
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
+              {{calculateTotal(sale) | currency:'USD'}}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex space-x-2">
+                <button 
+                  [routerLink]="['/sales', sale.id]" 
+                  class="text-blue-600 hover:text-blue-900 transition-colors"
+                >
+                  View
+                </button>
+                <button 
+                  [routerLink]="['/sales', sale.id, 'edit']" 
+                  class="text-green-600 hover:text-green-900 transition-colors"
+                >
+                  Edit
+                </button>
+                <button 
+                  (click)="deleteSale(sale.id)" 
+                  class="text-red-600 hover:text-red-900 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="sales.length === 0" class="text-center py-12">
+      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No sales found</h3>
+      <p class="mt-1 text-sm text-gray-500">Get started by creating a new sale.</p>
+    </div>
+  </div>
+</div>
