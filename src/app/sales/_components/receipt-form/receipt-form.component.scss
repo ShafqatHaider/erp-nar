@@ -1,0 +1,84 @@
+:host {
+  display: block;
+}
+
+// Custom animations for better UX
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.receipt-container {
+  animation: slideIn 0.3s ease-out;
+  
+  @media (max-width: 1024px) {
+    animation: fadeIn 0.3s ease-out;
+  }
+}
+
+// Custom scrollbar for denominations
+.denominations-grid {
+  max-height: 300px;
+  overflow-y: auto;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a1a1a1;
+    }
+  }
+}
+
+// Focus styles
+input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+// Disabled state styles
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .denominations-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .quick-payment-buttons {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

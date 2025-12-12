@@ -1,0 +1,21 @@
+<tr [formGroupName]="index" class="border-b">
+
+    <td class="px-4 py-2">
+    <div>{{ctrl('itemName')}}</div>
+    <small class="text-gray-500">{{ctrl('productCode')}}</small>
+    </td>
+    <td class="px-4 py-2 text-right">
+        {{ctrl('currentStock')}}
+    </td>
+    <td class="px-4 py-2 text-right">
+        <input type="number" 
+        formControlName="qty"
+        class="form-input w-20 text-right">
+    </td>
+    <td class="px-4 py-2 text-right">
+        {{ctrl('rate')}}
+    </td>
+    <td class="px-4 py-2 text-right font-semibold">
+        {{ctrl('lineAmount')}}
+    </td>
+</tr>

@@ -1,0 +1,160 @@
+<div class="relative w-full" (clickOutside)="closeDropdown()">
+  <!-- Label -->
+  <label *ngIf="label" 
+         [for]="ngId" 
+         class="block text-sm font-medium text-gray-700 mb-1">
+    {{ label }}
+    <span *ngIf="required" class="text-red-500">*</span>
+  </label>
+
+  <!-- Select Trigger -->
+  <div class="relative">
+    <button
+      type="button"
+      [id]="ngId"
+      [name]="ngName"
+      [attr.aria-expanded]="selectedData.isOpen"
+      [attr.aria-labelledby]="ngId"
+      [disabled]="disabled"
+      (click)="toggleDropdown()"
+      (keydown)="handleKeydown($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      class="w-full px-4 py-2.5 text-left bg-white border rounded-lg shadow-sm focus:outline-none transition-all duration-200 flex justify-between items-center"
+      [class]="{
+        'border-blue-500 ring-2 ring-blue-200': selectedData.hasFocus,
+        'border-gray-300': !selectedData.hasFocus && !selectedData.isOpen,
+        'border-blue-500': selectedData.isOpen,
+        'bg-gray-100 cursor-not-allowed opacity-50': disabled,
+        'pr-10': clearable && selectedData.selectedValue
+      }"
+    >
+      <span class="truncate" [class.text-gray-400]="!selectedData.selectedValue">
+        {{ getDisplayValue() }}
+      </span>
+      
+      <div class="flex items-center space-x-2 ml-2">
+        <!-- Clear Button -->
+        <button
+          *ngIf="clearable && selectedData.selectedValue && !disabled"
+          type="button"
+          (click)="clearSelection($event)"
+          class="text-gray-400 hover:text-gray-600 focus:outline-none"
+          aria-label="Clear selection"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        
+        <!-- Dropdown Icon -->
+        <svg 
+          class="w-5 h-5 text-gray-400 transition-transform duration-200" 
+          [class.rotate-180]="selectedData.isOpen"
+          fill="none" 
+          stroke="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </button>
+  </div>
+
+  <!-- Dropdown Options -->
+  <div 
+    *ngIf="selectedData.isOpen"
+    class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden"
+    [style.max-height]="maxHeight"
+  >
+    <!-- Search Input -->
+    <div *ngIf="searchable" class="p-3 border-b border-gray-100">
+      <div class="relative">
+        <input
+          #searchInput
+          type="text"
+          [placeholder]="searchPlaceholder"
+          [value]="selectedData.searchQuery"
+          (input)="onSearchInput($event)"
+          class="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Search..."
+        />
+        <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+        <button
+          *ngIf="selectedData.searchQuery"
+          type="button"
+          (click)="clearSearch()"
+          class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <!-- Search hint -->
+      <p *ngIf="selectedData.searchQuery && selectedData.searchQuery.length < minCharsToSearch" 
+         class="mt-1 text-xs text-gray-500">
+        Type at least {{ minCharsToSearch }} character{{ minCharsToSearch > 1 ? 's' : '' }}
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="p-4 text-center">
+      <div class="inline-block animate-spin rounded-full h-5 w-5 border-2 border-blue-500 border-t-transparent"></div>
+      <p class="mt-1 text-sm text-gray-500">Loading options...</p>
+    </div>
+
+    <!-- Options List -->
+    <div *ngIf="!loading" class="overflow-auto" [style.max-height]="'calc(' + maxHeight + ' - 120px)'">
+      <ul>
+        <li *ngFor="let option of selectedData.filteredOptions; trackBy: trackByFn"
+            (click)="selectOption(option)"
+            class="px-4 py-3 cursor-pointer hover:bg-blue-50 transition-colors duration-150 flex items-center justify-between border-b border-gray-100 last:border-b-0"
+            [class.bg-blue-50]="isSelected(option)"
+            [class.text-blue-600]="isSelected(option)"
+        >
+          <div class="flex items-center space-x-3">
+            <!-- Optional: Checkbox or Radio -->
+            <div class="w-4 h-4 border border-gray-300 rounded flex-shrink-0"
+                 [class.bg-blue-500]="isSelected(option)"
+                 [class.border-blue-500]="isSelected(option)">
+              <svg *ngIf="isSelected(option)" class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            
+            <span class="truncate">{{ option[displayProp] }}</span>
+          </div>
+          
+          <!-- Optional: Badge or additional info -->
+          <span *ngIf="option['badge']" class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">
+            {{ option['badge'] }}
+          </span>
+        </li>
+
+        <!-- Empty State -->
+        <li *ngIf="selectedData.filteredOptions.length === 0 && !loading" class="px-4 py-8 text-center">
+          <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="mt-2 text-gray-500 font-medium">{{ noResultsText }}</p>
+          <p *ngIf="selectedData.searchQuery" class="text-sm text-gray-400 mt-1">
+            No results for "{{selectedData.searchQuery }}"
+          </p>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer (Optional) -->
+    <div *ngIf="options.length > 10" class="border-t border-gray-100 px-4 py-2 bg-gray-50">
+      <p class="text-xs text-gray-500">
+        Showing {{ selectedData.filteredOptions.length }} of {{ options.length }} options
+      </p>
+    </div>
+  </div>
+</div>

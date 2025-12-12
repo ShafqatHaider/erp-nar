@@ -1,15 +1,18 @@
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { Component, ElementRef, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SaleService } from '../../Core/Services/sale.service';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CreateSaleMain, SaleItem, SaleMen, SaleReceiptCreate } from '../../Core/models/sale.model';
+import { SelectComponent } from '../../Core/components/select/select.component';
+import { FormHeaderComponent } from "../../Core/components/form-header/form-header.component";
+import { ReceiptFormComponent } from '../_components/receipt-form/receipt-form.component';
 
 @Component({
   selector: 'app-sale-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
+  imports: [SelectComponent, ReactiveFormsModule, FormsModule, CommonModule, RouterModule, FormHeaderComponent, ReceiptFormComponent],
   templateUrl: './sale-form.component.html',
   styleUrl: './sale-form.component.scss'
 })
@@ -28,15 +31,20 @@ export class SaleFormComponent implements OnInit {
   createdSaleId?: number;
 
   @ViewChildren('qtyInput') qtyInputs!: QueryList<ElementRef>;
-
+accData:any;
   constructor(
     private fb: FormBuilder,
     private saleService: SaleService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private location:Location
   ) {
     this.saleForm = this.createSaleForm();
     this.receiptForm = this.createReceiptForm();
+  }
+
+  onBack():void{
+    this.location.back();
   }
 
   // Getter for sale items FormArray
@@ -137,6 +145,7 @@ loadSale(): void {
         this.saleItemsArr = res;
         this.populateItemsGrid(this.saleItemsArr);
         this.isLoading = false;
+        console.log('Sale items loaded:', res);
       },
       error: (error) => {
         console.error('Error loading sale items:', error);
@@ -144,7 +153,33 @@ loadSale(): void {
       }
     });
   }
+previousBalance: number = 0;
+ onSaleManSelected(salesman: SaleMen | null): void {
+  if (salesman) {
+    console.log('Selected salesman:', salesman);
+    
+    // If you need to update other form fields based on the selection
+    this.saleForm.patchValue({
+      accId: salesman.id,
+      accName: salesman.title  // If you want to auto-fill the accName field
+    });
 
+    this.previousBalance = salesman.previousBalance;
+
+    // Or if you want to store the entire object
+    this.selectedSalesman = salesman;
+  } else {
+    // Clear selection
+    this.saleForm.patchValue({
+      accId: '',
+      accName: ''
+    });
+    this.selectedSalesman = null;
+  }
+}
+
+
+selectedSalesman: SaleMen | null = null;
   populateItemsGrid(arr: any[]): void {
     this.saleItems.clear();
     
@@ -221,30 +256,30 @@ loadSale(): void {
   }
 
   // Update receipt total when denominations change
-  onDenominationChange(): void {
-    const total = this.calculateDenominationTotal();
-    this.receiptForm.patchValue({
-      totalAmount: total
-    });
-  }
+  // onDenominationChange(): void {
+  //   const total = this.calculateDenominationTotal();
+  //   this.receiptForm.patchValue({
+  //     totalAmount: total
+  //   });
+  // }
 
   // Check if any denomination is filled
-  hasDenominations(): boolean {
-    const form = this.receiptForm.value;
-    return (
-      form.fiveThousands > 0 ||
-      form.thousands > 0 ||
-      form.fiveHundreds > 0 ||
-      form.hundreds > 0 ||
-      form.fifties > 0 ||
-      form.twenties > 0 ||
-      form.tens > 0 ||
-      form.fives > 0 ||
-      form.twos > 0 ||
-      form.ones > 0 ||
-      form.otherAmount > 0
-    );
-  }
+  // hasDenominations(): boolean {
+  //   const form = this.receiptForm.value;
+  //   return (
+  //     form.fiveThousands > 0 ||
+  //     form.thousands > 0 ||
+  //     form.fiveHundreds > 0 ||
+  //     form.hundreds > 0 ||
+  //     form.fifties > 0 ||
+  //     form.twenties > 0 ||
+  //     form.tens > 0 ||
+  //     form.fives > 0 ||
+  //     form.twos > 0 ||
+  //     form.ones > 0 ||
+  //     form.otherAmount > 0
+  //   );
+  // }
 
   onSubmit(): void {
     if (this.saleForm.valid && this.hasItemsWithQuantity()) {
@@ -304,49 +339,241 @@ loadSale(): void {
     }
   }
 
+  // onSaveReceipt(): void {
+  //   if (this.receiptForm.valid && this.hasDenominations() && this.createdSaleId) {
+  //     this.isSavingReceipt = true;
+
+  //     const receiptData: SaleReceiptCreate = {
+  //       invoiceId: this.createdSaleId,
+  //       accId: this.saleForm.get('accId')?.value,
+  //       receiptDate: new Date(this.receiptForm.get('receiptDate')?.value),
+  //       totalAmount: this.receiptForm.get('totalAmount')?.value,
+  //       ones: this.receiptForm.get('ones')?.value,
+  //       twos: this.receiptForm.get('twos')?.value,
+  //       fives: this.receiptForm.get('fives')?.value,
+  //       tens: this.receiptForm.get('tens')?.value,
+  //       twenties: this.receiptForm.get('twenties')?.value,
+  //       fifties: this.receiptForm.get('fifties')?.value,
+  //       hundreds: this.receiptForm.get('hundreds')?.value,
+  //       thousands: this.receiptForm.get('thousands')?.value,
+  //       fiveThousands: this.receiptForm.get('fiveThousands')?.value,
+  //       otherAmount: this.receiptForm.get('otherAmount')?.value,
+  //       notes: this.receiptForm.get('notes')?.value,
+  //       branchId: this.saleForm.get('branchId')?.value,
+  //       userId: this.saleForm.get('userId')?.value
+  //     };
+
+  //     this.saleService.addReceipt(receiptData).subscribe({
+  //       next: (receipt) => {
+  //         this.isSavingReceipt = false;
+  //         alert('Receipt saved successfully!');
+  //         this.router.navigate(['/sales', this.createdSaleId]);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error saving receipt:', error);
+  //         this.isSavingReceipt = false;
+  //         alert('Error saving receipt. Please try again.');
+  //       }
+  //     });
+  //   } else {
+  //     if (!this.hasDenominations()) {
+  //       alert('Please add at least one denomination or use Other Amount field.');
+  //     }
+  //     this.markFormGroupTouched(this.receiptForm);
+  //   }
+  // }
+
+
+
   onSaveReceipt(): void {
-    if (this.receiptForm.valid && this.hasDenominations() && this.createdSaleId) {
-      this.isSavingReceipt = true;
+  if (this.receiptForm.valid && this.createdSaleId) {
+    this.isSavingReceipt = true;
 
-      const receiptData: SaleReceiptCreate = {
-        invoiceId: this.createdSaleId,
-        accId: this.saleForm.get('accId')?.value,
-        receiptDate: new Date(this.receiptForm.get('receiptDate')?.value),
-        totalAmount: this.receiptForm.get('totalAmount')?.value,
-        ones: this.receiptForm.get('ones')?.value,
-        twos: this.receiptForm.get('twos')?.value,
-        fives: this.receiptForm.get('fives')?.value,
-        tens: this.receiptForm.get('tens')?.value,
-        twenties: this.receiptForm.get('twenties')?.value,
-        fifties: this.receiptForm.get('fifties')?.value,
-        hundreds: this.receiptForm.get('hundreds')?.value,
-        thousands: this.receiptForm.get('thousands')?.value,
-        fiveThousands: this.receiptForm.get('fiveThousands')?.value,
-        otherAmount: this.receiptForm.get('otherAmount')?.value,
-        notes: this.receiptForm.get('notes')?.value,
-        branchId: this.saleForm.get('branchId')?.value,
-        userId: this.saleForm.get('userId')?.value
-      };
-
-      this.saleService.addReceipt(receiptData).subscribe({
-        next: (receipt) => {
-          this.isSavingReceipt = false;
-          alert('Receipt saved successfully!');
-          this.router.navigate(['/sales', this.createdSaleId]);
-        },
-        error: (error) => {
-          console.error('Error saving receipt:', error);
-          this.isSavingReceipt = false;
-          alert('Error saving receipt. Please try again.');
-        }
-      });
-    } else {
-      if (!this.hasDenominations()) {
-        alert('Please add at least one denomination or use Other Amount field.');
-      }
-      this.markFormGroupTouched(this.receiptForm);
+    const receiptAmount = this.receiptForm.get('totalAmount')?.value || 0;
+    
+    // Check if receipt amount is valid (should be > 0)
+    if (receiptAmount <= 0) {
+      alert('Please enter a valid receipt amount greater than 0.');
+      this.isSavingReceipt = false;
+      return;
     }
+
+    // Optional: Check if receipt amount exceeds current balance
+    const currentBalance = this.getCurrentBalance();
+    if (receiptAmount > currentBalance + this.totalReceiptPaid) {
+      const confirmOverpayment = confirm(
+        `Receipt amount (Rs. ${receiptAmount.toFixed(2)}) exceeds the current balance (Rs. ${currentBalance.toFixed(2)}).\n` +
+        `Do you want to proceed with overpayment?`
+      );
+      
+      if (!confirmOverpayment) {
+        this.isSavingReceipt = false;
+        return;
+      }
+    }
+
+    const receiptData: SaleReceiptCreate = {
+      invoiceId: this.createdSaleId,
+      accId: this.saleForm.get('accId')?.value,
+      receiptDate: new Date(this.receiptForm.get('receiptDate')?.value),
+      totalAmount: receiptAmount,
+      ones: this.receiptForm.get('ones')?.value,
+      twos: this.receiptForm.get('twos')?.value,
+      fives: this.receiptForm.get('fives')?.value,
+      tens: this.receiptForm.get('tens')?.value,
+      twenties: this.receiptForm.get('twenties')?.value,
+      fifties: this.receiptForm.get('fifties')?.value,
+      hundreds: this.receiptForm.get('hundreds')?.value,
+      thousands: this.receiptForm.get('thousands')?.value,
+      fiveThousands: this.receiptForm.get('fiveThousands')?.value,
+      otherAmount: this.receiptForm.get('otherAmount')?.value,
+      notes: this.receiptForm.get('notes')?.value,
+      branchId: this.saleForm.get('branchId')?.value,
+      userId: this.saleForm.get('userId')?.value,
+      //paymentMethod: this.receiptForm.get('paymentMethod')?.value || 'Cash'
+    };
+
+    this.saleService.addReceipt(receiptData).subscribe({
+      next: (receipt) => {
+        this.isSavingReceipt = false;
+        
+        // Update total receipts paid
+        this.totalReceiptPaid += receiptAmount;
+        
+        // Show success message
+        const currentBalanceAfterReceipt = this.getCurrentBalance();
+        
+        let message = `Receipt of Rs. ${receiptAmount.toFixed(2)} saved successfully!\n`;
+        if (currentBalanceAfterReceipt === 0) {
+          message += '✅ Balance is fully settled!';
+        } else if (currentBalanceAfterReceipt > 0) {
+          message += `💰 Remaining balance: Rs. ${currentBalanceAfterReceipt.toFixed(2)}`;
+        } else {
+          message += `📈 Advance payment: Rs. ${Math.abs(currentBalanceAfterReceipt).toFixed(2)}`;
+        }
+        
+        alert(message);
+        
+        // Reset receipt form with updated balance
+        this.resetReceiptForm();
+        
+        // If balance is fully settled, ask if user wants to navigate
+        if (currentBalanceAfterReceipt === 0) {
+          const navigate = confirm('Balance is fully settled. Do you want to view the sale details?');
+          if (navigate) {
+            this.router.navigate(['/sales', this.createdSaleId]);
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error saving receipt:', error);
+        this.isSavingReceipt = false;
+        alert('Error saving receipt. Please try again.');
+      }
+    });
+  } else {
+    // Show validation errors
+    if (!this.hasDenominations()) {
+      alert('Please add at least one denomination or use Other Amount field.');
+    }
+    this.markFormGroupTouched(this.receiptForm);
   }
+}
+
+// Helper method to reset receipt form
+private resetReceiptForm(): void {
+  // Reset all denomination fields to 0
+  const resetValues: any = {
+    receiptDate: new Date().toISOString().split('T')[0],
+    totalAmount: this.getCurrentBalance(), // Set to remaining balance
+    paymentMethod: 'Cash',
+    notes: ''
+  };
+  
+  // Reset all denomination fields
+  this.denominations.forEach(denom => {
+    resetValues[denom.name] = 0;
+  });
+  resetValues['otherAmount'] = 0;
+  
+  this.receiptForm.reset(resetValues);
+}
+
+// Update hasDenominations method to allow zero denominations if using otherAmount
+hasDenominations(): boolean {
+  const form = this.receiptForm.value;
+  
+  // Check if any denomination is filled OR otherAmount is filled
+  const hasDenoms = this.denominations.some(denom => form[denom.name] > 0);
+  const hasOtherAmount = (form.otherAmount || 0) > 0;
+  
+  // If totalAmount is > 0, then it's valid (user might have entered directly)
+  const hasTotalAmount = (form.totalAmount || 0) > 0;
+  
+  return hasDenoms || hasOtherAmount || hasTotalAmount;
+}
+
+// Update onDenominationChange to handle direct totalAmount input
+onDenominationChange(): void {
+  let total = 0;
+  
+  // Calculate from denominations
+  for (const denom of this.denominations) {
+    const count = this.receiptForm.get(denom.name)?.value || 0;
+    total += count * denom.value;
+  }
+  
+  total += this.receiptForm.get('otherAmount')?.value || 0;
+  
+  this.receiptForm.patchValue({
+    totalAmount: total
+  }, { emitEvent: false });
+}
+
+// Add a method to handle manual total amount input
+onTotalAmountChange(): void {
+  const totalAmount = this.receiptForm.get('totalAmount')?.value || 0;
+  
+  // Optional: Auto-clear denominations if user enters amount manually
+  if (totalAmount > 0) {
+    // Keep denominations but show note that they need to match
+    // Or clear them if you want strict validation
+    // this.clearDenominations();
+  }
+}
+
+// Optional: Clear denomination fields
+private clearDenominations(): void {
+  const patchValues: any = {};
+  this.denominations.forEach(denom => {
+    patchValues[denom.name] = 0;
+  });
+  patchValues['otherAmount'] = 0;
+  
+  this.receiptForm.patchValue(patchValues);
+}
+
+// Update the receipt form initialization in ngOnInit or after sale creation
+private initializeReceiptForm(): void {
+  this.receiptForm.reset({
+    receiptDate: new Date().toISOString().split('T')[0],
+    totalAmount: this.getCurrentBalance(),
+    fiveThousands: 0,
+    thousands: 0,
+    fiveHundreds: 0,
+    hundreds: 0,
+    fifties: 0,
+    twenties: 0,
+    tens: 0,
+    fives: 0,
+    twos: 0,
+    ones: 0,
+    otherAmount: 0,
+    notes: '',
+    paymentMethod: 'Cash'
+  });
+}
+
 
   onSkipReceipt(): void {
     if (this.createdSaleId) {
@@ -393,5 +620,140 @@ loadSale(): void {
         control?.markAsTouched();
       }
     });
+  }
+
+
+
+
+
+  showReceiptForm: boolean = false;
+totalReceiptPaid: number = 0;
+denominations = [
+  { name: 'fiveThousands', label: '5000 Rs', value: 5000 },
+  { name: 'thousands', label: '1000 Rs', value: 1000 },
+  { name: 'fiveHundreds', label: '500 Rs', value: 500 },
+  { name: 'hundreds', label: '100 Rs', value: 100 },
+  { name: 'fifties', label: '50 Rs', value: 50 },
+  { name: 'twenties', label: '20 Rs', value: 20 },
+  { name: 'tens', label: '10 Rs', value: 10 },
+  { name: 'fives', label: '5 Rs', value: 5 },
+  { name: 'twos', label: '2 Rs', value: 2 },
+  { name: 'ones', label: '1 Rs', value: 1 }
+];
+
+
+toggleReceiptForm(): void {
+  this.showReceiptForm = !this.showReceiptForm;
+  if (this.showReceiptForm) {
+    // Auto-set receipt amount to current balance
+    this.receiptForm.patchValue({
+      totalAmount: this.getCurrentBalance()
+    });
+  }
+}
+
+getTotalBalance(): number {
+  // Previous Balance + Current Bill
+  return this.previousBalance + this.getGridTotalAmount();
+}
+
+
+getBalanceStatus(): string {
+  const balance = this.getCurrentBalance();
+  
+  if (balance === 0) {
+    return 'Balance is fully settled';
+  } else if (balance > 0) {
+    return `Customer owes: Rs. ${balance.toFixed(2)}`;
+  } else {
+    return `Advance payment: Rs. ${Math.abs(balance).toFixed(2)}`;
+  }
+}
+
+
+
+
+
+
+
+
+  // In the onSubmit success handler:
+  onSaleCreated(sale: any): void {
+    this.createdSaleId = sale.id;
+    this.showReceiptForm = true;
+  }
+
+  // Handle receipt save
+  onReceiptSaved(receiptData: SaleReceiptCreate): void {
+    this.isSavingReceipt = true;
+    
+    this.saleService.addReceipt(receiptData).subscribe({
+      next: (receipt) => {
+        this.isSavingReceipt = false;
+        this.totalReceiptPaid += receiptData.totalAmount;
+        
+        // Show success message
+        this.showSuccessMessage(receiptData.totalAmount);
+        
+        // If balance is settled, hide receipt form
+        if (this.getCurrentBalance() === 0) {
+          this.showReceiptForm = false;
+        }
+      },
+      error: (error) => {
+        this.isSavingReceipt = false;
+        this.handleReceiptError(error);
+      }
+    });
+  }
+
+  // Skip receipt
+  onReceiptSkipped(): void {
+    const confirmSkip = confirm('Are you sure you want to skip adding a receipt? You can add it later.');
+    if (confirmSkip) {
+      this.router.navigate(['/sales', this.createdSaleId]);
+    }
+  }
+
+  // Close receipt form
+  onReceiptFormClosed(): void {
+    this.showReceiptForm = false;
+  }
+
+  // Helper methods
+  getCurrentBalance(): number {
+    return (this.previousBalance + this.getGridTotalAmount()) - this.totalReceiptPaid;
+  }
+
+  private showSuccessMessage(amount: number): void {
+    const remaining = this.getCurrentBalance();
+    let message = `✅ Receipt of Rs. ${amount.toFixed(2)} saved successfully!\n\n`;
+    
+    if (remaining === 0) {
+      message += '🎉 Balance is fully settled!';
+    } else if (remaining > 0) {
+      message += `💰 Remaining balance: Rs. ${remaining.toFixed(2)}`;
+    } else {
+      message += `📈 Advance payment: Rs. ${Math.abs(remaining).toFixed(2)}`;
+    }
+    
+    alert(message);
+  }
+
+  private handleReceiptError(error: any): void {
+    console.error('Receipt save error:', error);
+    let errorMessage = 'Error saving receipt. ';
+    
+    if (error.status === 400) {
+      errorMessage += 'Invalid receipt data. Please check the amount and try again.';
+    } else if (error.status === 404) {
+      errorMessage += 'Invoice not found.';
+    } else if (error.status === 500) {
+      errorMessage += 'Server error. Please try again later.';
+    } else {
+      errorMessage += 'Please try again.';
+    }
+    
+    alert(errorMessage);
   }
 }
